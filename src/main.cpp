@@ -942,21 +942,21 @@ static const int CUTOFF_HEIGHT = POW_CUTOFF_HEIGHT;
 int64 GetProofOfWorkReward(int nHeight, int64 nFees, uint256 prevHash)
 {
     int64 nSubsidy = 1 * COIN;
-    if(nHeight == 1)        nSubsidy = 100000 * COIN;
-
     if(nHeight % 160 ==0) nSubsidy = 1024 * COIN;
-       else       nSubsidy = 1;
+       else       nSubsidy = 1 * COIN;
 
     double num  = nHeight /  10000 + 2 ;
     if(nHeight % 160 ==0)nSubsidy = (1024 / num ) * COIN;
-    else       nSubsidy = 1;
+    else       nSubsidy = 1* COIN;
 
     if(nHeight > 100000 ==0)
     {
         if(nHeight % 160 ==0) nSubsidy = 8 * COIN;
             else
-        nSubsidy = 1;
+        nSubsidy = 1 * COIN;
     }
+    if(nHeight == 1)
+        nSubsidy = 100000 * COIN;
 
     return nSubsidy + nFees;
 }
@@ -2560,7 +2560,7 @@ bool LoadBlockIndex(bool fAllowNew)
         block.nTime    = 1420085516;
         block.nBits    = bnProofOfWorkLimit.GetCompact();
         block.nNonce   = 472145;
-        if (true) {
+        if (false) {
 
         // This will figure out a valid hash and Nonce if you're
         // creating a different genesis block:
