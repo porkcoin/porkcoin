@@ -1,0 +1,14 @@
+#!/bin/sh
+
+set -e
+
+umask 077
+
+basedir=~/.x11coin
+cfgfile="$basedir/x11coin.conf"
+
+[ -e "$basedir" ] || mkdir "$basedir"
+
+[ -e "$cfgfile" ] || perl -le 'print"rpcpassword=",map{(a..z,A..Z,0..9)[rand 62]}0..9' > "$cfgfile"
+
+exec /usr/lib/x11coin/x11coind "$@"

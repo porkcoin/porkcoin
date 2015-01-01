@@ -1,0 +1,16 @@
+#!/bin/sh
+
+set -e
+
+umask 077
+
+basedir=~/.x11coin
+dbfile="$basedir/DB_CONFIG"
+cfgfile="$basedir/x11coin.conf"
+
+[ -e "$basedir" ] || mkdir "$basedir"
+
+# x11coin does not clean up DB log files by default
+[ -e "$dbfile" ] || echo 'set_flags DB_LOG_AUTOREMOVE' > "$dbfile"
+
+exec /usr/lib/x11coin/x11coin-qt "$@"
