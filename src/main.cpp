@@ -942,16 +942,15 @@ static const int CUTOFF_HEIGHT = POW_CUTOFF_HEIGHT;
 int64 GetProofOfWorkReward(int nHeight, int64 nFees, uint256 prevHash)
 {
     int64 nSubsidy = 1 * COIN;
-    if(nHeight % 160 ==0) nSubsidy = 1024 * COIN;
-       else       nSubsidy = 1 * COIN;
 
-    double num  = nHeight /  10000 + 2 ;
-    if(nHeight % 160 ==0)nSubsidy = (1024 / num ) * COIN;
-    else       nSubsidy = 1* COIN;
-
-    if(nHeight > 100000 ==0)
+    if(nHeight > 100000 )
     {
         if(nHeight % 160 ==0) nSubsidy = 8 * COIN;
+            else
+        nSubsidy = 1 * COIN;
+    }else if(nHeight < 10000)
+    {
+        if(nHeight % 160 ==0) nSubsidy = 1024 * COIN;
             else
         nSubsidy = 1 * COIN;
     }
@@ -4400,6 +4399,7 @@ void BitcoinMiner(CWallet *pwallet, bool fProofOfStake)
                 if (thash <= hashTarget)
                 {
 
+                 //   printf("-1\n");
                     if (!pblock->SignBlock(*pwalletMain))
                     {
                         break;
@@ -4410,6 +4410,8 @@ void BitcoinMiner(CWallet *pwallet, bool fProofOfStake)
                     SetThreadPriority(THREAD_PRIORITY_LOWEST);
                     break;
                 }
+
+               // printf("-\n");
                 pblock->nNonce += 1;
                 nHashesDone += 1;
                 if ((pblock->nNonce & 0xFF) == 0)
