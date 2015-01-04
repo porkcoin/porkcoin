@@ -935,6 +935,7 @@ int generateMTRandom(unsigned int s, int range)
     return dist(gen);
 }
 
+#include <QTime>
 
 
 static const int CUTOFF_HEIGHT = POW_CUTOFF_HEIGHT;	
@@ -943,19 +944,58 @@ int64 GetProofOfWorkReward(int nHeight, int64 nFees, uint256 prevHash)
 {
     int64 nSubsidy = 1 * COIN;
 
-    if(nHeight > 100000 )
-    {
-        if(nHeight % 160 ==0) nSubsidy = 8 * COIN;
-            else
-        nSubsidy = 1 * COIN;
-    }else if(nHeight < 10000)
-    {
-        if(nHeight % 160 ==0) nSubsidy = 1024 * COIN;
-            else
-        nSubsidy = 1 * COIN;
-    }
+    QTime time= QTime::currentTime();
+    qsrand(time.msec()+time.second()*1000);
+    int xxx=qrand()%160;
+
     if(nHeight == 1)
+    {
         nSubsidy = 100000 * COIN;
+    }else
+    if(nHeight < 10000)
+    {
+        if(nHeight % (160 + xxx) ==0) nSubsidy = 1024 * COIN;
+            else
+        nSubsidy = 1 * COIN;
+    }else  if(nHeight > 10000 && nHeight < 20000 )
+    {        
+         if(nHeight % (160 + xxx) ==0) nSubsidy = 512 * COIN;
+             else
+         nSubsidy = 1 * COIN;
+    }else  if(nHeight > 20000 && nHeight < 40000 )
+    {
+         if(nHeight % (160 + xxx) ==0) nSubsidy = 256 * COIN;
+             else
+         nSubsidy = 1 * COIN;
+    }else   if(nHeight > 40000 && nHeight < 80000 )
+    {
+         if(nHeight % (160 + xxx) ==0) nSubsidy = 128 * COIN;
+             else
+         nSubsidy = 1 * COIN;
+    }
+    else   if(nHeight > 80000 && nHeight < 160000 )
+    {
+         if(nHeight % (160 + xxx) ==0) nSubsidy = 64 * COIN;
+             else
+         nSubsidy = 1 * COIN;
+    }
+    else   if(nHeight > 160000 && nHeight < 320000 )
+    {
+         if(nHeight % (160 + xxx) ==0) nSubsidy = 32 * COIN;
+             else
+         nSubsidy = 1 * COIN;
+    }
+    else   if(nHeight > 320000 && nHeight < 640000 )
+    {
+         if(nHeight % (160 + xxx) ==0) nSubsidy = 16 * COIN;
+             else
+         nSubsidy = 1 * COIN;
+    }else     if(nHeight >  640000 )
+    {
+         if(nHeight % (160 + xxx) ==0) nSubsidy = 8 * COIN;
+             else
+         nSubsidy = 1 * COIN;
+    }
 
     return nSubsidy + nFees;
 }
