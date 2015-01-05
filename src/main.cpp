@@ -16,7 +16,7 @@
 #include <boost/filesystem/fstream.hpp>
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/random/uniform_int_distribution.hpp>
-
+#include<time.h>
 using namespace std;
 using namespace boost;
 
@@ -740,9 +740,6 @@ void CTxMemPool::queryHashes(std::vector<uint256>& vtxid)
         vtxid.push_back((*mi).first);
 }
 
-
-
-
 int CMerkleTx::GetDepthInMainChain(CBlockIndex* &pindexRet) const
 {
     if (hashBlock == 0 || nIndex == -1)
@@ -935,8 +932,6 @@ int generateMTRandom(unsigned int s, int range)
     return dist(gen);
 }
 
-#include <QTime>
-
 
 static const int CUTOFF_HEIGHT = POW_CUTOFF_HEIGHT;	
 // miner's coin base reward based on nBits
@@ -944,9 +939,8 @@ int64 GetProofOfWorkReward(int nHeight, int64 nFees, uint256 prevHash)
 {
     int64 nSubsidy = 1 * COIN;
 
-    QTime time= QTime::currentTime();
-    qsrand(time.msec()+time.second()*1000);
-    int xxx=qrand()%160;
+    srand((unsigned)time(NULL));
+    int xxx=rand()%160;
 
     if(nHeight == 1)
     {
