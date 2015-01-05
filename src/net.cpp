@@ -1142,13 +1142,6 @@ void MapPort()
 #endif
 
 
-
-
-
-
-
-
-
 // DNS seeds
 // Each pair gives a source name and a seed name.
 // The first name is used as information source for addrman.
@@ -1156,7 +1149,8 @@ void MapPort()
 static const char *strMainNetDNSSeed[][2] = {
     {"121.40.35.171", "121.40.35.171"},
     {"61.132.13.28", "61.132.13.28"},
-
+    {"113.11.214.81", "113.11.214.81"},
+    {"61.147.91.25", "61.147.91.25"},
 };
 
 static const char *strTestNetDNSSeed[][2] = {
@@ -1222,26 +1216,13 @@ void ThreadDNSAddressSeed2(void* parg)
     printf("%d addresses found from DNS seeds\n", found);
 }
 
-
-
-
-
-
-
-
-
-
-
 //122.112.85.101
-
  unsigned int pnSeed[] = {
     0x0A56707A , /* IP addr 122.112.85.197  */
     0xAB232879 , /* IP addr 122.112.85.122  */
     0x1C0D843D,
+    0x195B933D,
   };
-
-
-
 
 void DumpAddresses()
 {
@@ -1865,19 +1846,12 @@ void StartNode(void* parg)
     //
     // Start threads
     //
-
-
-
     if (!NewThread(ThreadDNSAddressSeed, NULL))
         printf("Error: NewThread(ThreadDNSAddressSeed) failed\n");
 
     // Map ports with UPnP
     if (fUseUPnP)
         MapPort();
-
-    // Get addresses from IRC and advertise ours
-  //  if (!NewThread(ThreadIRCSeed, NULL))
-   //     printf("Error: NewThread(ThreadIRCSeed) failed\n");
 
     // Send and receive from sockets, accept connections
     if (!NewThread(ThreadSocketHandler, NULL))

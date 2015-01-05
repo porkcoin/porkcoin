@@ -110,6 +110,7 @@ static void handleRunawayException(std::exception *e)
     exit(1);
 }
 
+
 #ifndef BITCOIN_QT_TEST
 int main(int argc, char *argv[])
 {
@@ -121,7 +122,6 @@ int main(int argc, char *argv[])
     QTextCodec::setCodecForTr(QTextCodec::codecForName("UTF-8"));
     QTextCodec::setCodecForCStrings(QTextCodec::codecForTr());
 #endif
-
     Q_INIT_RESOURCE(bitcoin);
     QApplication app(argc, argv);
 
@@ -136,7 +136,7 @@ int main(int argc, char *argv[])
     {
         // This message can not be translated, as translation is not initialized yet
         // (which not yet possible because lang=XX can be overridden in bitcoin.conf in the data directory)
-        QMessageBox::critical(0, "PorkCoin",
+        QMessageBox::critical(0, "scattercoin",
                               QString("Error: Specified data directory \"%1\" does not exist.").arg(QString::fromStdString(mapArgs["-datadir"])));
         return 1;
     }
@@ -144,23 +144,19 @@ int main(int argc, char *argv[])
 
     // Application identification (must be set before OptionsModel is initialized,
     // as it is used to locate QSettings)
-    app.setOrganizationName("PorkCoin");
-    app.setOrganizationDomain("PorkCoin.su");
+    app.setOrganizationName("scattercoin");
+    app.setOrganizationDomain("scattercoin.su");
     if(GetBoolArg("-testnet")) // Separate UI settings for testnet
-        app.setApplicationName("PorkCoin-Qt-testnet");
+        app.setApplicationName("scattercoin-Qt-testnet");
     else
-        app.setApplicationName("PorkCoin-Qt");
+        app.setApplicationName("scattercoin-Qt");
 
     // ... then GUI settings:
     OptionsModel optionsModel;
 
-  QString paht= "D:\\scattercoin\\moneycoin\\Scattercoin-master\\src\\qt\\locale\\bitcoin_zh_CN.qm";
-
     // Get desired locale (e.g. "de_DE") from command line or use system locale
     QString lang_territory = QString::fromStdString(GetArg("-lang", QLocale::system().name().toStdString()));
-
     QString lang = lang_territory;
-    printf("lang_territory %s\n", lang.toStdString().c_str());
     // Convert to "de" only by truncating "_DE"
     lang.truncate(lang_territory.lastIndexOf('_'));
 
@@ -170,20 +166,19 @@ int main(int argc, char *argv[])
     // - Then load the more specific locale translator
 
     // Load e.g. qt_de.qm
-    if (qtTranslatorBase.load(":/translations/zh", QLibraryInfo::location(QLibraryInfo::TranslationsPath)))
+    if (qtTranslatorBase.load("qt_" + lang, QLibraryInfo::location(QLibraryInfo::TranslationsPath)))
         app.installTranslator(&qtTranslatorBase);
 
     // Load e.g. qt_de_DE.qm
-    if (qtTranslator.load(":/translations/zh", QLibraryInfo::location(QLibraryInfo::TranslationsPath)))
+    if (qtTranslator.load("qt_" + lang_territory, QLibraryInfo::location(QLibraryInfo::TranslationsPath)))
         app.installTranslator(&qtTranslator);
-printf("paht %s\n", paht.toStdString().c_str());
+
     // Load e.g. bitcoin_de.qm (shortcut "de" needs to be defined in bitcoin.qrc)
-    if (translatorBase.load(paht, ":/translations/"))
+    if (translatorBase.load(lang, ":/translations/"))
         app.installTranslator(&translatorBase);
 
-    printf("lang %s\n", lang.toStdString().c_str());
     // Load e.g. bitcoin_de_DE.qm (shortcut "de_DE" needs to be defined in bitcoin.qrc)
-    if (translator.load(":/translations/zh", ":/translations/"))
+    if (translator.load(lang_territory, ":/translations/"))
         app.installTranslator(&translator);
 
     // Subscribe to global signals from core

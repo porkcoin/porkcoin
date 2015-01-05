@@ -33,6 +33,8 @@ using namespace boost;
 using namespace boost::asio;
 using namespace json_spirit;
 
+
+
 void ThreadRPCServer2(void* parg);
 
 static std::string strRPCUserColonPass;

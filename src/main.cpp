@@ -16,7 +16,7 @@
 #include <boost/filesystem/fstream.hpp>
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/random/uniform_int_distribution.hpp>
-
+#include<time.h>
 using namespace std;
 using namespace boost;
 
@@ -740,9 +740,6 @@ void CTxMemPool::queryHashes(std::vector<uint256>& vtxid)
         vtxid.push_back((*mi).first);
 }
 
-
-
-
 int CMerkleTx::GetDepthInMainChain(CBlockIndex* &pindexRet) const
 {
     if (hashBlock == 0 || nIndex == -1)
@@ -936,26 +933,62 @@ int generateMTRandom(unsigned int s, int range)
 }
 
 
-
 static const int CUTOFF_HEIGHT = POW_CUTOFF_HEIGHT;	
 // miner's coin base reward based on nBits
 int64 GetProofOfWorkReward(int nHeight, int64 nFees, uint256 prevHash)
 {
     int64 nSubsidy = 1 * COIN;
-    if(nHeight == 1)        nSubsidy = 100000 * COIN;
 
-    if(nHeight % 160 ==0) nSubsidy = 1024 * COIN;
-       else       nSubsidy = 1;
+    srand((unsigned)time(NULL));
+    int xxx=rand()%160;
 
-    double num  = nHeight /  10000 + 2 ;
-    if(nHeight % 160 ==0)nSubsidy = (1024 / num ) * COIN;
-    else       nSubsidy = 1;
-
-    if(nHeight > 100000 ==0)
+    if(nHeight == 1)
     {
-        if(nHeight % 160 ==0) nSubsidy = 8 * COIN;
+        nSubsidy = 100000 * COIN;
+    }else
+    if(nHeight < 10000)
+    {
+        if(nHeight % (160 + xxx) ==0) nSubsidy = 1024 * COIN;
             else
-        nSubsidy = 1;
+        nSubsidy = 1 * COIN;
+    }else  if(nHeight > 10000 && nHeight < 20000 )
+    {        
+         if(nHeight % (160 + xxx) ==0) nSubsidy = 512 * COIN;
+             else
+         nSubsidy = 1 * COIN;
+    }else  if(nHeight > 20000 && nHeight < 40000 )
+    {
+         if(nHeight % (160 + xxx) ==0) nSubsidy = 256 * COIN;
+             else
+         nSubsidy = 1 * COIN;
+    }else   if(nHeight > 40000 && nHeight < 80000 )
+    {
+         if(nHeight % (160 + xxx) ==0) nSubsidy = 128 * COIN;
+             else
+         nSubsidy = 1 * COIN;
+    }
+    else   if(nHeight > 80000 && nHeight < 160000 )
+    {
+         if(nHeight % (160 + xxx) ==0) nSubsidy = 64 * COIN;
+             else
+         nSubsidy = 1 * COIN;
+    }
+    else   if(nHeight > 160000 && nHeight < 320000 )
+    {
+         if(nHeight % (160 + xxx) ==0) nSubsidy = 32 * COIN;
+             else
+         nSubsidy = 1 * COIN;
+    }
+    else   if(nHeight > 320000 && nHeight < 640000 )
+    {
+         if(nHeight % (160 + xxx) ==0) nSubsidy = 16 * COIN;
+             else
+         nSubsidy = 1 * COIN;
+    }else     if(nHeight >  640000 )
+    {
+         if(nHeight % (160 + xxx) ==0) nSubsidy = 8 * COIN;
+             else
+         nSubsidy = 1 * COIN;
     }
 
     return nSubsidy + nFees;
@@ -2560,7 +2593,7 @@ bool LoadBlockIndex(bool fAllowNew)
         block.nTime    = 1420085516;
         block.nBits    = bnProofOfWorkLimit.GetCompact();
         block.nNonce   = 472145;
-        if (true) {
+        if (false) {
 
         // This will figure out a valid hash and Nonce if you're
         // creating a different genesis block:
@@ -4400,6 +4433,7 @@ void BitcoinMiner(CWallet *pwallet, bool fProofOfStake)
                 if (thash <= hashTarget)
                 {
 
+                 //   printf("-1\n");
                     if (!pblock->SignBlock(*pwalletMain))
                     {
                         break;
@@ -4410,6 +4444,8 @@ void BitcoinMiner(CWallet *pwallet, bool fProofOfStake)
                     SetThreadPriority(THREAD_PRIORITY_LOWEST);
                     break;
                 }
+
+               // printf("-\n");
                 pblock->nNonce += 1;
                 nHashesDone += 1;
                 if ((pblock->nNonce & 0xFF) == 0)

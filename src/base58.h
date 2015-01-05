@@ -76,7 +76,7 @@ inline bool DecodeBase58(const char* psz, std::vector<unsigned char>& vchRet)
 {
     CAutoBN_CTX pctx;
     vchRet.clear();
-    CBigNum bn58 = 55;
+    CBigNum bn58 = 58;
     CBigNum bn = 0;
     CBigNum bnChar;
     while (isspace(*psz))
@@ -276,7 +276,7 @@ class CBitcoinAddress : public CBase58Data
 public:
     enum
     {
-        PUBKEY_ADDRESS = 51,  // PorkCoin: address begin with 'S'
+        PUBKEY_ADDRESS = 55,  // PorkCoin: address begin with 'S'
         SCRIPT_ADDRESS = 8, 
         PUBKEY_ADDRESS_TEST = 111,
         SCRIPT_ADDRESS_TEST = 196,
