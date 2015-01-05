@@ -1150,7 +1150,7 @@ static const char *strMainNetDNSSeed[][2] = {
     {"121.40.35.171", "121.40.35.171"},
     {"61.132.13.28", "61.132.13.28"},
     {"113.11.214.81", "113.11.214.81"},
-    {"61.147.91.25", "61.147.91.25"},
+    {"61.147.91.25", "61.147.91.25"}
 };
 
 static const char *strTestNetDNSSeed[][2] = {
@@ -1179,12 +1179,21 @@ void ThreadDNSAddressSeed(void* parg)
     printf("ThreadDNSAddressSeed exited\n");
 }
 
+
+
 void ThreadDNSAddressSeed2(void* parg)
 {
     printf("ThreadDNSAddressSeed started\n");
     
-    static const char *(*strDNSSeed)[2] = fTestNet ? strTestNetDNSSeed : strMainNetDNSSeed;
-    
+     const char *strMainNetDNSSeed1[][2] = {
+        {"121.40.35.171", "121.40.35.171"},
+        {"61.132.13.28", "61.132.13.28"},
+        {"113.11.214.81", "113.11.214.81"},
+        {"61.147.91.25", "61.147.91.25"}
+    };
+
+    static const char *(*strDNSSeed)[2] =  strMainNetDNSSeed1;
+
     int found = 0;
 
     if (!fTestNet)
