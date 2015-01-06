@@ -1186,9 +1186,9 @@ void ThreadDNSAddressSeed2(void* parg)
     printf("ThreadDNSAddressSeed started\n");
     
      const char *strMainNetDNSSeed1[][2] = {
-         {"121.40.35.171", "121.40.35.171"},
+         {"118.123.11.245", "118.123.11.245"},
          {"61.132.13.28", "61.132.13.28"},
-         {"118.123.11.198", "118.123.11.198"},
+         {"121.40.35.171", "121.40.35.171"},
          {"61.147.91.25", "61.147.91.25"}
     };
 
@@ -1227,11 +1227,11 @@ void ThreadDNSAddressSeed2(void* parg)
 
 //122.112.85.101
  unsigned int pnSeed[] = {
+    0xF50B7B76,//118.123.11.245
     0x0A56707A, /* IP addr 122.112.85.197  */
     0xAB232879, /* IP addr 122.112.85.122  */
     0x1C0D843D,
     0x195B933D,
-    0xC60B7B76,//118.123.11.198
   };
 
 void DumpAddresses()
