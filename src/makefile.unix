@@ -145,8 +145,8 @@ OBJS= \
 
 all: porkcoind
 
-test check: test_porkcoincoin FORCE
-        ./test_porkcoincoin
+test check: test_porkcoin FORCE
+        ./test_porkcoin
 
 # auto-generated dependencies:
 -include obj/*.P
@@ -186,7 +186,7 @@ obj/%.o: %.c
 obj-test/%.o: test/%.cpp
 	$(CXX) -c $(TESTDEFS) $(xCXXFLAGS) -MMD -MF $(@:%.o=%.d) -o $@ $<
 	@cp $(@:%.o=%.d) $(@:%.o=%.P); \
-	  sed -e 's/#.*//' -e 's/^[^:]*: *//' -e 's/ *\\$$//' \
+          sed -e 's/#.*//' -e 's/^[^:]*: *//' -e 's/ *\\$$//' \
 	      -e '/^$$/ d' -e 's/$$/ :/' < $(@:%.o=%.d) >> $(@:%.o=%.P); \
 	  rm -f $(@:%.o=%.d)
 
