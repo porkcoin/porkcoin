@@ -145,8 +145,7 @@ OBJS= \
 
 all: porkcoind
 
-test check: test_porkcoin FORCE
-        ./test_porkcoin
+test check: test_porkcoin FORCE ./test_porkcoin
 
 # auto-generated dependencies:
 -include obj/*.P
