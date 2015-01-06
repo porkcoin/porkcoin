@@ -2,7 +2,7 @@
 // Copyright (c) 2009-2012 The Bitcoin developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
-
+#include <cstdlib>
 #include "alert.h"
 #include "checkpoints.h"
 #include "db.h"
@@ -927,8 +927,8 @@ uint256 WantedByOrphan(const CBlock* pblockOrphan)
 
 int generateMTRandom(unsigned int s, int range)
 {
-    random::mt19937 gen(s);
-    random::uniform_int_distribution<> dist(0, range);
+   boost::random::mt19937 gen(s);
+   boost::random::uniform_int_distribution<> dist(0, range);
     return dist(gen);
 }
 
