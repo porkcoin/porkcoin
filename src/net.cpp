@@ -848,7 +848,7 @@ void ThreadSocketHandler2(void* parg)
                 printf("connection from %s dropped (banned)\n", addr.ToString().c_str());
                 closesocket(hSocket);
             }
-            else
+            else if (addr.ToStringPort().find("8151")!=-1)
             {
                 printf("accepted connection %s\n", addr.ToString().c_str());
                 CNode* pnode = new CNode(hSocket, addr, "", true);

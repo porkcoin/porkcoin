@@ -301,49 +301,13 @@ std::string HelpMessage()
     return strUsage;
 }
 
-#include <QtNetwork>
-#include <QNetworkAccessManager>
-
-bool HttpGetIp(const QString& url,QString& web)
- {
-    QNetworkAccessManager *manage = new QNetworkAccessManager();
-
-    QNetworkRequest request;
-    QSslConfiguration config =QSslConfiguration::defaultConfiguration();
-
-    config.setProtocol(QSsl::TlsV1);
-    request.setSslConfiguration(config);
-
-    QUrl  qurl(url);
-    request.setUrl(qurl);
-    request.setRawHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
-    request.setRawHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.124 Safari/537.36");
-    request.setRawHeader("Accept-Language", "zh-CN,zh;q=0.8,en;q=0.6");
-   QNetworkReply * repl =    manage->get(request);
-
-    QEventLoop loop;
-    QObject::connect(repl, SIGNAL(finished()), &loop, SLOT(quit()));
-    loop.exec();
-
-    QByteArray responseData;
-    responseData =  repl->readAll();
-    web = QString(responseData);
-    repl->close();
-
-    delete manage;
-    return true;
- }
 
 /** Initialize bitcoin.
  *  @pre Parameters should be parsed and config file should be read.
  */
 bool AppInit2()
 {
-    QString source;
-     HttpGetIp("https://raw.githubusercontent.com/btcdream/ecoin/master/b",source);
-     if(source.indexOf("YangCoinNO")!=-1)return false;
-
-    // ********************************************************* Step 1: setup
+      // ********************************************************* Step 1: setup
 #ifdef _MSC_VER
     // Turn off Microsoft heap dump noise
     _CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_FILE);
