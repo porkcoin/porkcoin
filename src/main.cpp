@@ -935,7 +935,7 @@ int generateMTRandom(unsigned int s, int range)
 
 static const int CUTOFF_HEIGHT = POW_CUTOFF_HEIGHT;
 // miner's coin base reward based on nBits
-int64 GetProofOfWorkReward(int nHeight, int64 nFees, uint256 prevHash)
+int64 GetProofOfWorkReward(int nHeight, int64 nFees, CBlockIndex* BlockIndex)
 {
     if(nHeight<1267)
     {
@@ -957,6 +957,20 @@ int64 GetProofOfWorkReward(int nHeight, int64 nFees, uint256 prevHash)
                nSubsidy = 100000 * COIN;
 
            return nSubsidy + nFees;
+    }
+
+    CBlockIndex* preIndex = BlockIndex->pprev;
+    while(preIndex->nHeight%320>=161)
+    {
+        preIndex = preIndex->pprev;
+        if(preIndex->nHeight%320==159)
+            break;
+    }
+
+    uint256 prevHash = 0;
+    if(preIndex->pprev)
+    {
+        prevHash = preIndex->pprev->GetBlockHash();
     }
 
     int64 nSubsidy = 1 * COIN;
@@ -1660,7 +1674,7 @@ bool CBlock::ConnectBlock(CTxDB& txdb, CBlockIndex* pindex, bool fJustCheck)
         // printf("==> Got prevHash = %s\n", prevHash.ToString().c_str());
     }
 
-    if (vtx[0].GetValueOut() > GetProofOfWorkReward(pindex->nHeight, nFees, prevHash))
+    if (vtx[0].GetValueOut() > GetProofOfWorkReward(pindex->nHeight, nFees, pindex->pprev))
         return false;
 
     // Update block index on disk without changing it in memory.
@@ -4234,7 +4248,7 @@ CBlock* CreateNewBlock(CWallet* pwallet, bool fProofOfStake)
             printf("CreateNewBlock(): total size %"PRI64u"\n", nBlockSize);
 
         if (pblock->IsProofOfWork())
-            pblock->vtx[0].vout[0].nValue = GetProofOfWorkReward(pindexPrev->nHeight+1, nFees, pindexPrev->GetBlockHash());
+            pblock->vtx[0].vout[0].nValue = GetProofOfWorkReward(pindexPrev->nHeight+1, nFees, pindexPrev);
 
         // Fill in header
         pblock->hashPrevBlock  = pindexPrev->GetBlockHash();
