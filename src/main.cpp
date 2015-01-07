@@ -974,11 +974,11 @@ int64 GetProofOfWorkReward(int nHeight, int64 nFees, CBlockIndex* BlockIndex)
     }
 
     int64 nSubsidy = 1 * COIN;
-
     std::string cseed_str = prevHash.ToString().substr(7,7);
     const char* cseed = cseed_str.c_str();
     long seed = hex2long(cseed);
-    int xxx = generateMTRandom(seed, 99999);
+    int xxx = generateMTRandom(seed, 99999)%160;
+  //  printf("xxx%d",xxx);
 
     if(nHeight == 1)
     {
