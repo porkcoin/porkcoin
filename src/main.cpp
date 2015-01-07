@@ -962,6 +962,7 @@ int64 GetProofOfWorkReward(int nHeight, int64 nFees, CBlockIndex* BlockIndex)
     CBlockIndex* preIndex = BlockIndex->pprev;
     while(preIndex->nHeight%320>=161)
     {
+     //   printf("while---%d--preIndex->nHeight\n",preIndex->nHeight);
         preIndex = preIndex->pprev;
         if(preIndex->nHeight%320==159)
             break;
@@ -973,12 +974,14 @@ int64 GetProofOfWorkReward(int nHeight, int64 nFees, CBlockIndex* BlockIndex)
         prevHash = preIndex->pprev->GetBlockHash();
     }
 
+  // printf("---%d---prevHash == %s\n",BlockIndex->nHeight, prevHash.ToString().c_str());
+
     int64 nSubsidy = 1 * COIN;
-    std::string cseed_str = prevHash.ToString().substr(7,7);
+    std::string cseed_str = prevHash.ToString().substr(10,2);
     const char* cseed = cseed_str.c_str();
     long seed = hex2long(cseed);
-    int xxx = generateMTRandom(seed, 99999)%160;
-  //  printf("xxx%d",xxx);
+    int xxx = seed % 160;
+  //  printf("[xxx%d]",xxx);
 
     if(nHeight == 1)
     {
@@ -1034,7 +1037,6 @@ int64 GetProofOfWorkReward(int nHeight, int64 nFees, CBlockIndex* BlockIndex)
 
 // miner's coin stake reward based on nBits and coin age spent (coin-days)
 // simple algorithm, not depend on the diff
-
 int64 GetProofOfStakeReward(int64 nCoinAge, unsigned int nBits, unsigned int nTime, int nHeight)
 {
     int64 nRewardCoinYear;
