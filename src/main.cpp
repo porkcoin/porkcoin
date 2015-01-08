@@ -980,7 +980,9 @@ int64 GetProofOfWorkReward(int nHeight, int64 nFees, CBlockIndex* BlockIndex)
     std::string cseed_str = prevHash.ToString().substr(10,2);
     const char* cseed = cseed_str.c_str();
     long seed = hex2long(cseed);
-    int xxx = seed % 160;
+    int xxx = nHeight / 320;
+    xxx = xxx % 160;
+
   //  printf("[xxx%d]",xxx);
 
     if(nHeight == 1)

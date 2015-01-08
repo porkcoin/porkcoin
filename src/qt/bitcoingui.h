@@ -11,6 +11,7 @@ class ClientModel;
 class WalletModel;
 class TransactionView;
 class OverviewPage;
+class PorkMarkets;
 class AddressBookPage;
 class SendCoinsDialog;
 class SignVerifyMessageDialog;
@@ -62,6 +63,7 @@ private:
     QStackedWidget *centralWidget;
 
     OverviewPage *overviewPage;
+    PorkMarkets *porkmarketPage;
     QWidget *transactionsPage;
     AddressBookPage *addressBookPage;
     AddressBookPage *receiveCoinsPage;
@@ -77,6 +79,7 @@ private:
 
     QMenuBar *appMenuBar;
     QAction *overviewAction;
+    QAction *porkMarketAction;
     QAction *historyAction;
     QAction *quitAction;
     QAction *sendCoinsAction;
@@ -140,6 +143,11 @@ public slots:
     void handleURI(QString strURI);
 
 private slots:
+
+
+    /** Switch to overview (home) page */
+    void gotoPorkMarketPage();
+
     /** Switch to overview (home) page */
     void gotoOverviewPage();
     /** Switch to history (transactions) page */
