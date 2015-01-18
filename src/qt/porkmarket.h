@@ -4,7 +4,8 @@
 #include <QWidget>
 #include <QVBoxLayout>
 #include <QVariant>
-
+#include <QListWidget>
+#include <QListWidgetItem>
 QT_BEGIN_NAMESPACE
 class QModelIndex;
 QT_END_NAMESPACE
@@ -41,6 +42,7 @@ private:
       QByteArray ba;
 private slots:
 
+    void connectFri(QListWidgetItem * );
     void on_pushButton_clicked();
 
     void on_pushButton_2_clicked();

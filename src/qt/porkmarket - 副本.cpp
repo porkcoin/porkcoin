@@ -9,14 +9,11 @@
 #include "guiutil.h"
 #include "guiconstants.h"
 #include "askpassphrasedialog.h"
-#include "sendmessagesdialog.h"
 #include "net.h"
 #include <QAbstractItemDelegate>
 #include <QPainter>
 #include <QLabel>
 #include <QFileDialog>
-#include <QBuffer>
-#include "dialog.h"
 
 PorkMarket::PorkMarket(QWidget *parent) :
     QWidget(parent),
@@ -72,88 +69,61 @@ PorkMarket::~PorkMarket()
 
 void PorkMarket::on_pushButton_clicked()
 {
-    QString str= ui->textEdit->toPlainText();
-    QString img = QString(ba.toBase64());
 
-
-    QImage  ima;
-    ima.loadFromData(QByteArray::fromBase64(img.toLatin1()));
-
-    QString address = ui->lineEdit->text();
-    QString price = ui->lineEdit_2->text();
-    QString mes= str + "|"+img+ "|"+price+ "|"+address;
-    if(price.isEmpty()||address.isEmpty()||img.isEmpty())return;
-      RelayMyMessage("test",mes.toStdString().c_str());
-  //  show_text(mes);
+//    QString str= ui->textEdit->toPlainText();
+//    QString img = QString(myPixma.toByteArray().toBase64());
+//    QString link = ui->lineEdit->text();
+//    QString mes= str + "|"+link+"|"+img;
+      //     RelayMyMessage("test",mes.toStdString().c_str());
+   show_text("mes.toStdString()");
 }
 
-void PorkMarket::show_text(const QString &message)
+void PorkMarket::show_text(const std::string &message)
 {
-    QStringList list = message.split("|",QString::SkipEmptyParts);
+    QString mes=QString::fromStdString(message);
+  //  QStringList list = mes.split("|",QString::SkipEmptyParts);
 
     QWidget* w = new QWidget();
-    QVBoxLayout* vbl = new QVBoxLayout(w);
 
-    QHBoxLayout* top = new QHBoxLayout(w);
+    QVBoxLayout* vbl = new QVBoxLayout(w);
     QDateTime current_date_time = QDateTime::currentDateTime();
     QString current_date = current_date_time.toString("yyyy-MM-dd hh:mm:ss");
-    QLabel* lab_time = new QLabel(current_date);
-    top->addWidget(lab_time);
-    if(list.size()>3)
-    {
-      QLabel* lab_price = new QLabel(list[2]);
-      top->addWidget(lab_price);
+    QLabel* lab_01 = new QLabel(current_date);
+    QLabel* lab_02 = new QLabel(mes);
+             //   QPushButton* pb = new QPushButton("button");
 
-    }
-    vbl->addLayout(top);
+  //  QByteArray ba;// = QByteArray::fromBase64(list[0].toAscii());//.fromBase64();
+ //   QLabel* lab_03 = new QLabel(current_date);
+ //   QPixmap pixmap1;
+  //  pixmap1.loadFromData(ba);//":/images/res/images/2.png");
+  //  lab_03->setPixmap(pixmap1);
 
-    QLabel* lab_image = new QLabel;
-    QImage  image;
-    if(list.size()>1)
-    image.loadFromData(QByteArray::fromBase64(list[1].toLatin1()));
-    lab_image->setPixmap(QPixmap::fromImage(image));
-    QLabel* lab_content = new QLabel(list[0]);
-    lab_content->setAlignment(Qt::AlignLeft|Qt::AlignTop);
-    lab_content->setMidLineWidth(600);
-    lab_content->setWordWrap(true);
+    vbl->addWidget(lab_01);
 
-    QHBoxLayout* bottom = new QHBoxLayout(w);
-    bottom->setSizeConstraint(QLayout::SetFixedSize);
-    bottom->addWidget(lab_image);
-    bottom->addWidget(lab_content);
 
-    vbl->addLayout(bottom);
+    QHBoxLayout* Hbl = new QHBoxLayout(w);
+    Hbl->addWidget(lab_02);
+   Hbl->addWidget(lab_03);
+    vbl->addLayout(Hbl);
     vbl->setSizeConstraint( QLayout::SetFixedSize );
     w->setLayout(vbl);
-    QListWidgetItem* lwi = new QListWidgetItem;
 
+    QListWidgetItem* lwi = new QListWidgetItem;
     lwi->setSizeHint( w->sizeHint() );
     ui->listWidget->addItem(lwi);
     ui->listWidget->setItemWidget(lwi, w);
-
-    lwi->setData(4,QVariant(list[0]));
-    lwi->setData(1,QVariant(list[1]));
-    lwi->setData(5,QVariant(list[2]));
-    lwi->setData(3,QVariant(list[3]));
-    lwi->setData(2,QVariant(""));
-    QObject::connect(ui->listWidget,SIGNAL(itemClicked(QListWidgetItem * )),this,SLOT(connectFri(QListWidgetItem * )));
 }
 
 void PorkMarket::on_pushButton_2_clicked()
 {
     QString path = QFileDialog::getOpenFileName(this, tr("打开图像"), ".", tr("图像文件(*.png)"));
-    QImage  image;
-    image.load(path);
-    image=image.scaled(100,100,Qt::IgnoreAspectRatio,Qt::FastTransformation);
-    ui->label_2->setPixmap(QPixmap::fromImage(image));
-    QBuffer buffer(&ba);
-    buffer.open(QIODevice::WriteOnly);
-    image.save(&buffer, "PNG");
-}
+    QPixmap pixmap;
+    pixmap.load(path);
+    pixmap=pixmap.scaled(60,60,Qt::IgnoreAspectRatio,Qt::FastTransformation);
 
-void PorkMarket::connectFri(QListWidgetItem * w)
-{
-   Dialog dialog(w->data(1).toString(),w->data(4).toString(),w->data(5).toString(),w->data(3).toString());
-   dialog.exec();
-   return;
+    myPixma = QVariant(pixmap);
+
+
+    ui->label_2->setPixmap(pixmap);
+
 }

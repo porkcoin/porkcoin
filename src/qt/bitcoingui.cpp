@@ -368,15 +368,11 @@ void BitcoinGUI::createToolBars()
     QPixmap pixmap1;
     pixmap1.load(":/images/toolbar");
     lab_01->setPixmap(pixmap1);
-
- //   QToolBar *toolbar1 = addToolBar(QT::tr("Tabs toolbar"));
- //   toolbar1->addWidget(lab_01);
- //   toolbar1->setMovable(false);
-    addToolBarBreak();
+   addToolBarBreak();
 
 
     QToolBar *toolbar =  new QToolBar(tr("Tabs Top toolbar"));
-            addToolBar(Qt::LeftToolBarArea,toolbar);
+    //        addToolBar(Qt::LeftToolBarArea,toolbar);
     toolbar->setIconSize(QSize(131,60));
 
   //  toolbar->setMovable(false);
