@@ -643,14 +643,6 @@ public:
 };
 
 
-
-
-
-
-
-
-
-
 inline void RelayInventory(const CInv& inv)
 {
     // Put on lists to offer to the other nodes
@@ -688,6 +680,16 @@ inline void RelayMessage<>(const CInv& inv, const CDataStream& ss)
     }
 
     RelayInventory(inv);
+}
+
+
+
+inline void RelayMyMessage(const char* pszCommand,const std::string data)
+{
+    LOCK(cs_vNodes);
+    BOOST_FOREACH(CNode* pnode, vNodes)
+        pnode->PushMessage( pszCommand, data);
+
 }
 
 

@@ -11,7 +11,8 @@ class ClientModel;
 class WalletModel;
 class TransactionView;
 class OverviewPage;
-class PorkMarkets;
+class PorkMarket;
+class MessagePage;
 class AddressBookPage;
 class SendCoinsDialog;
 class SignVerifyMessageDialog;
@@ -63,7 +64,7 @@ private:
     QStackedWidget *centralWidget;
 
     OverviewPage *overviewPage;
-    PorkMarkets *porkmarketPage;
+    PorkMarket *porkmarketPage;
     QWidget *transactionsPage;
     AddressBookPage *addressBookPage;
     AddressBookPage *receiveCoinsPage;
@@ -197,6 +198,8 @@ private slots:
     void updateMintingIcon();
     /** Update minting weight info */
     void updateMintingWeights();
+
+     void updateTestChanged(std::string message);
 };
 
 #endif

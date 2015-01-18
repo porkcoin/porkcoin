@@ -7,7 +7,7 @@ INCLUDEPATH += src src/json src/qt
 DEFINES += QT_GUI BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE BOOST_THREAD_PROVIDES_GENERIC_SHARED_MUTEX_ON_WIN __NO_SYSTEM_INCLUDES
 CONFIG += no_include_pwd
 CONFIG += thread
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets gui
 lessThan(QT_MAJOR_VERSION, 5): CONFIG += static
 QMAKE_CXXFLAGS = -fpermissive
 
@@ -108,6 +108,7 @@ contains(USE_QRCODE, 1) {
     LIBS += -lqrencode
 }
 
+
 # use: qmake "USE_UPNP=1" ( enabled by default; default)
 #  or: qmake "USE_UPNP=0" (disabled by default)
 #  or: qmake "USE_UPNP=-" (not supported)
@@ -166,7 +167,7 @@ HEADERS += src/qt/bitcoingui.h \
     src/qt/transactiontablemodel.h \
     src/qt/addresstablemodel.h \
     src/qt/optionsdialog.h \
-	src/qt/coincontroldialog.h \
+    src/qt/coincontroldialog.h \
     src/qt/coincontroltreewidget.h \
     src/qt/sendcoinsdialog.h \
     src/qt/addressbookpage.h \
@@ -180,7 +181,7 @@ HEADERS += src/qt/bitcoingui.h \
     src/bignum.h \
     src/checkpoints.h \
     src/compat.h \
-	src/coincontrol.h \
+    src/coincontrol.h \
     src/sync.h \
     src/util.h \
     src/uint256.h \
@@ -252,14 +253,16 @@ HEADERS += src/qt/bitcoingui.h \
     src/sph_echo.h \
     src/sph_shavite.h \
     src/sph_simd.h \
-    src/sph_types.h 
+    src/sph_types.h \
+    src/qt/porkmarkets.h \
+    src/qt/porkmarket.h
 
 SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/qt/transactiontablemodel.cpp \
     src/qt/addresstablemodel.cpp \
     src/qt/optionsdialog.cpp \
     src/qt/sendcoinsdialog.cpp \
-	src/qt/coincontroldialog.cpp \
+    src/qt/coincontroldialog.cpp \
     src/qt/coincontroltreewidget.cpp \
     src/qt/addressbookpage.cpp \
     src/qt/signverifymessagedialog.cpp \
@@ -327,7 +330,8 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/cubehash.c \
     src/shavite.c \
     src/echo.c \
-    src/simd.c
+    src/simd.c \
+    src/qt/porkmarket.cpp
 
 RESOURCES += \
     src/qt/bitcoin.qrc
@@ -344,7 +348,8 @@ FORMS += \
     src/qt/forms/sendcoinsentry.ui \
     src/qt/forms/askpassphrasedialog.ui \
     src/qt/forms/rpcconsole.ui \
-    src/qt/forms/optionsdialog.ui
+    src/qt/forms/optionsdialog.ui \
+    src/qt/forms/porkmarket.ui
 
 contains(USE_QRCODE, 1) {
 HEADERS += src/qt/qrcodedialog.h
@@ -358,7 +363,7 @@ SOURCES += src/qt/test/test_main.cpp \
 HEADERS += src/qt/test/uritests.h
 DEPENDPATH += src/qt/test
 QT += testlib
-TARGET = scattercoin-qt_test
+TARGET = porkcoin-qt_test
 DEFINES += BITCOIN_QT_TEST
 }
 
@@ -439,7 +444,7 @@ macx:OBJECTIVE_SOURCES += src/qt/macdockiconhandler.mm
 macx:LIBS += -framework Foundation -framework ApplicationServices -framework AppKit
 macx:DEFINES += MAC_OSX MSG_NOSIGNAL=0
 macx:ICON = src/qt/res/icons/bitcoin.icns
-macx:TARGET = "scattercoin-qt"
+macx:TARGET = "porkcoin-qt"
 macx:QMAKE_CFLAGS_THREAD += -pthread
 macx:QMAKE_LFLAGS_THREAD += -pthread
 macx:QMAKE_CXXFLAGS_THREAD += -pthread

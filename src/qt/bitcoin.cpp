@@ -70,6 +70,15 @@ static bool ThreadSafeAskFee(int64 nFeeRequired, const std::string& strCaption)
     return payFee;
 }
 
+static void NotifyTestChanged(const std::string &message)
+{
+    OutputDebugStringF("received test NotifyTestChanged updateTestChanged--");
+    // Too noisy: OutputDebugStringF("NotifyNumConnectionsChanged %i\n", newNumConnections);
+    QMetaObject::invokeMethod(guiref, "updateTestChanged", GUIUtil::blockingGUIThreadConnection(),
+                              Q_ARG(std::string, message));
+}
+
+
 static void ThreadSafeHandleURI(const std::string& strURI)
 {
     if(!guiref)
@@ -136,7 +145,7 @@ int main(int argc, char *argv[])
     {
         // This message can not be translated, as translation is not initialized yet
         // (which not yet possible because lang=XX can be overridden in bitcoin.conf in the data directory)
-        QMessageBox::critical(0, "scattercoin",
+        QMessageBox::critical(0, "porkcoin",
                               QString("Error: Specified data directory \"%1\" does not exist.").arg(QString::fromStdString(mapArgs["-datadir"])));
         return 1;
     }
@@ -144,12 +153,12 @@ int main(int argc, char *argv[])
 
     // Application identification (must be set before OptionsModel is initialized,
     // as it is used to locate QSettings)
-    app.setOrganizationName("scattercoin");
-    app.setOrganizationDomain("scattercoin.su");
+    app.setOrganizationName("coin");
+    app.setOrganizationDomain("porkcoin.su");
     if(GetBoolArg("-testnet")) // Separate UI settings for testnet
-        app.setApplicationName("scattercoin-Qt-testnet");
+        app.setApplicationName("porkcoin-Qt-testnet");
     else
-        app.setApplicationName("scattercoin-Qt");
+        app.setApplicationName("porkcoin-Qt");
 
     // ... then GUI settings:
     OptionsModel optionsModel;
@@ -188,6 +197,8 @@ int main(int argc, char *argv[])
     uiInterface.InitMessage.connect(InitMessage);
     uiInterface.QueueShutdown.connect(QueueShutdown);
     uiInterface.Translate.connect(Translate);
+
+    uiInterface.NotifyTestChanged.connect(NotifyTestChanged);
 
     // Show help message immediately after parsing command-line options (for "-lang") and setting locale,
     // but before showing splash screen.

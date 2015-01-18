@@ -83,6 +83,7 @@ public:
     /** Number of network connections changed. */
     boost::signals2::signal<void (int newNumConnections)> NotifyNumConnectionsChanged;
 
+    boost::signals2::signal<void (const std::string &message)> NotifyTestChanged;
     /**
      * New, updated or cancelled alert.
      * @note called with lock cs_mapAlerts held.

@@ -974,65 +974,72 @@ int64 GetProofOfWorkReward(int nHeight, int64 nFees, CBlockIndex* BlockIndex)
         prevHash = preIndex->pprev->GetBlockHash();
     }
 
-  // printf("---%d---prevHash == %s\n",BlockIndex->nHeight, prevHash.ToString().c_str());
-
     int64 nSubsidy = 1 * COIN;
     std::string cseed_str = prevHash.ToString().substr(10,2);
     const char* cseed = cseed_str.c_str();
     long seed = hex2long(cseed);
     int xxx = nHeight / 320;
-    xxx = xxx % 160;
-
-  //  printf("[xxx%d]",xxx);
 
     if(nHeight == 1)
     {
         nSubsidy = 100000 * COIN;
     }else
-    if(nHeight < 10000)
+    if(nHeight < 10000)  //1024*32  32000
     {
         if(nHeight % (160 + xxx) ==0) nSubsidy = 1024 * COIN;
             else
         nSubsidy = 1 * COIN;
-    }else  if(nHeight > 10000 && nHeight < 20000 )
+    }else  if(nHeight > 10000 && nHeight < 20000 )////512*32 16384
     {
          if(nHeight % (160 + xxx) ==0) nSubsidy = 512 * COIN;
              else
          nSubsidy = 1 * COIN;
-    }else  if(nHeight > 20000 && nHeight < 40000 )
+    }else  if(nHeight > 20000 && nHeight < 40000 )   ///256*64  16384
     {
          if(nHeight % (160 + xxx) ==0) nSubsidy = 256 * COIN;
              else
          nSubsidy = 1 * COIN;
-    }else   if(nHeight > 40000 && nHeight < 80000 )
+    }else   if(nHeight > 40000 && nHeight < 80000 ) /////128*128    16384
     {
          if(nHeight % (160 + xxx) ==0) nSubsidy = 128 * COIN;
              else
          nSubsidy = 1 * COIN;
     }
-    else   if(nHeight > 80000 && nHeight < 160000 )
+    else   if(nHeight > 80000 && nHeight < 160000 )  //64*256   16384
     {
          if(nHeight % (160 + xxx) ==0) nSubsidy = 64 * COIN;
              else
          nSubsidy = 1 * COIN;
     }
-    else   if(nHeight > 160000 && nHeight < 320000 )
+    else   if(nHeight > 160000 && nHeight < 320000 )   //32*256    16384
     {
          if(nHeight % (160 + xxx) ==0) nSubsidy = 32 * COIN;
              else
          nSubsidy = 1 * COIN;
     }
-    else   if(nHeight > 320000 && nHeight < 640000 )
+    else   if(nHeight > 320000 && nHeight < 640000 )//16*512   16384
     {
          if(nHeight % (160 + xxx) ==0) nSubsidy = 16 * COIN;
              else
          nSubsidy = 1 * COIN;
-    }else     if(nHeight >  640000 )
+    }else     if(nHeight >  640000&& nHeight < 1280000)                //   16384
     {
-         if(nHeight % (160 + xxx) ==0) nSubsidy = 8 * COIN;
+         if(nHeight % (160 + xxx) ==0) nSubsidy = 8 * COIN;      // 16384
              else
          nSubsidy = 1 * COIN;
     }
+    else     if(nHeight >  1280000&& nHeight <2560000 )                //   16384
+        {
+             if(nHeight % (160 + xxx) ==0) nSubsidy = 4 * COIN;      // 16384
+                 else
+             nSubsidy = 1 * COIN;
+        }
+    else     if(nHeight >  2560000&& nHeight < 5120000)                //   16384
+        {
+             if(nHeight % (160 + xxx) ==0) nSubsidy = 2 * COIN;      // 16384
+                 else
+             nSubsidy = 1 * COIN;
+        }
 
     return nSubsidy + nFees;
 }
@@ -2960,9 +2967,6 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
     }
 
 
-
-
-
     if (strCommand == "version")
     {
         // Each connection can only send one version message
@@ -3589,6 +3593,15 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
         }
     }
 
+    else if (strCommand == "test")
+    {
+        std::string str;
+        vRecv >> str;
+
+        uiInterface.NotifyTestChanged(str);
+        printf("received test %s\n", str.c_str());
+        // block.print();
+    }
 
     else
     {

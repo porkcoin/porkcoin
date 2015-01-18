@@ -74,6 +74,7 @@ void ClientModel::updateNumConnections(int numConnections)
     emit numConnectionsChanged(numConnections);
 }
 
+
 void ClientModel::updateAlert(const QString &hash, int status)
 {
     // Show error message notification for new alert
@@ -173,6 +174,8 @@ static void NotifyBlocksChanged(ClientModel *clientmodel)
     // Don't remove it, though, as it might be useful later.
 }
 
+
+
 static void NotifyNumConnectionsChanged(ClientModel *clientmodel, int newNumConnections)
 {
     // Too noisy: OutputDebugStringF("NotifyNumConnectionsChanged %i\n", newNumConnections);
@@ -194,6 +197,7 @@ void ClientModel::subscribeToCoreSignals()
     uiInterface.NotifyBlocksChanged.connect(boost::bind(NotifyBlocksChanged, this));
     uiInterface.NotifyNumConnectionsChanged.connect(boost::bind(NotifyNumConnectionsChanged, this, _1));
     uiInterface.NotifyAlertChanged.connect(boost::bind(NotifyAlertChanged, this, _1, _2));
+
 }
 
 void ClientModel::unsubscribeFromCoreSignals()
@@ -202,4 +206,5 @@ void ClientModel::unsubscribeFromCoreSignals()
     uiInterface.NotifyBlocksChanged.disconnect(boost::bind(NotifyBlocksChanged, this));
     uiInterface.NotifyNumConnectionsChanged.disconnect(boost::bind(NotifyNumConnectionsChanged, this, _1));
     uiInterface.NotifyAlertChanged.disconnect(boost::bind(NotifyAlertChanged, this, _1, _2));
+  //  uiInterface.NotifyTestChanged.disconnect(boost::bind(NotifyTestChanged, this,-1));
 }

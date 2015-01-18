@@ -53,6 +53,7 @@
         <file>res/images/2.png</file>
         <file>res/images/3.png</file>
         <file>res/images/4.png</file>
+        <file alias="toolbar">res/images/toolbar.png</file>
     </qresource>
     <qresource prefix="/movies">
         <file alias="update_spinner">res/movies/update_spinner.mng</file>

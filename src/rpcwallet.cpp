@@ -211,7 +211,7 @@ Value setaccount(const Array& params, bool fHelp)
 {
     if (fHelp || params.size() < 1 || params.size() > 2)
         throw runtime_error(
-            "setaccount <scattercoinaddress> <account>\n"
+            "setaccount <porkcoinaddress> <account>\n"
             "Sets the account associated with the given address.");
 
     CBitcoinAddress address(params[0].get_str());
@@ -241,7 +241,7 @@ Value getaccount(const Array& params, bool fHelp)
 {
     if (fHelp || params.size() != 1)
         throw runtime_error(
-            "getaccount <scattercoinaddress>\n"
+            "getaccount <porkcoinaddress>\n"
             "Returns the account associated with the given address.");
 
     CBitcoinAddress address(params[0].get_str());
@@ -281,7 +281,7 @@ Value sendtoaddress(const Array& params, bool fHelp)
 {
     if (fHelp || params.size() < 2 || params.size() > 4)
         throw runtime_error(
-		"sendtoaddress <scattercoinaddress> <amount> [comment] [comment-to]\n"
+        "sendtoaddress <porkcoinaddress> <amount> [comment] [comment-to]\n"
             "<amount> is a real and is rounded to the nearest 0.000001"
             + HelpRequiringPassphrase());
 
@@ -347,7 +347,7 @@ Value signmessage(const Array& params, bool fHelp)
 {
     if (fHelp || params.size() != 2)
         throw runtime_error(
-            "signmessage <scattercoinaddress> <message>\n"
+            "signmessage <porkcoinaddress> <message>\n"
             "Sign a message with the private key of an address");
 
     EnsureWalletIsUnlocked();
@@ -382,7 +382,7 @@ Value verifymessage(const Array& params, bool fHelp)
 {
     if (fHelp || params.size() != 3)
         throw runtime_error(
-            "verifymessage <scattercoinaddress> <signature> <message>\n"
+            "verifymessage <porkcoinaddress> <signature> <message>\n"
             "Verify a signed message");
 
     string strAddress  = params[0].get_str();
@@ -419,8 +419,8 @@ Value getreceivedbyaddress(const Array& params, bool fHelp)
 {
     if (fHelp || params.size() < 1 || params.size() > 2)
         throw runtime_error(
-            "getreceivedbyaddress <scattercoinaddress> [minconf=1]\n"
-            "Returns the total amount received by <scattercoinaddress> in transactions with at least [minconf] confirmations.");
+            "getreceivedbyaddress <porkcoinaddress> [minconf=1]\n"
+            "Returns the total amount received by <porkcoinaddress> in transactions with at least [minconf] confirmations.");
 
     // Bitcoin address
     CBitcoinAddress address = CBitcoinAddress(params[0].get_str());
@@ -657,7 +657,7 @@ Value sendfrom(const Array& params, bool fHelp)
 {
     if (fHelp || params.size() < 3 || params.size() > 6)
         throw runtime_error(
-		"sendfrom <fromaccount> <toscattercoinaddress> <amount> [minconf=1] [comment] [comment-to]\n"
+        "sendfrom <fromaccount> <toporkcoinaddress> <amount> [minconf=1] [comment] [comment-to]\n"
             "<amount> is a real and is rounded to the nearest 0.000001"
             + HelpRequiringPassphrase());
 
@@ -1576,8 +1576,8 @@ Value validateaddress(const Array& params, bool fHelp)
 {
     if (fHelp || params.size() != 1)
         throw runtime_error(
-            "validateaddress <scattercoinaddress>\n"
-            "Return information about <scattercoinaddress>.");
+            "validateaddress <porkcoinaddress>\n"
+            "Return information about <porkcoinaddress>.");
 
     CBitcoinAddress address(params[0].get_str());
     bool isValid = address.IsValid();
@@ -1605,8 +1605,8 @@ Value validatepubkey(const Array& params, bool fHelp)
 {
     if (fHelp || !params.size() || params.size() > 2)
         throw runtime_error(
-            "validatepubkey <scattercoinpubkey>\n"
-            "Return information about <scattercoinpubkey>.");
+            "validatepubkey <porkcoinpubkey>\n"
+            "Return information about <porkcoinpubkey>.");
 
     std::vector<unsigned char> vchPubKey = ParseHex(params[0].get_str());
     CPubKey pubKey(vchPubKey);

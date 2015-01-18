@@ -19,7 +19,8 @@
 #include "addresstablemodel.h"
 #include "transactionview.h"
 #include "overviewpage.h"
-#include "porkmarkets.h"
+#include "porkmarket.h"
+//#include "MessagePage.h"
 #include "bitcoinunits.h"
 #include "guiconstants.h"
 #include "askpassphrasedialog.h"
@@ -77,7 +78,7 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     notificator(0),
     rpcConsole(0)
 {
-    resize(850, 550);
+    resize(850, 500);
     setWindowTitle(tr("PorkCoin") + " - " + tr("Wallet"));
 #ifndef Q_OS_MAC
     qApp->setWindowIcon(QIcon(":icons/bitcoin"));
@@ -103,7 +104,7 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
 
     // Create tabs
     overviewPage = new OverviewPage();
-     porkmarketPage = new PorkMarkets();
+     porkmarketPage = new PorkMarket();
 
     transactionsPage = new QWidget(this);
     QVBoxLayout *vbox = new QVBoxLayout();
@@ -219,15 +220,19 @@ BitcoinGUI::~BitcoinGUI()
 void BitcoinGUI::createActions()
 {
     QActionGroup *tabGroup = new QActionGroup(this);
+    QIcon icon;(":/icons/overview");
 
-    overviewAction = new QAction(QIcon(":/icons/overview"), tr("&Overview"), this);
+ // overviewAction->setIconSize
+   overviewAction = new QAction(QIcon(":/icons/overview"), tr("&Overview"), this);
+  //  overviewAction = new QAction(tr("&Overview"), this);
     overviewAction->setToolTip(tr("Show general overview of wallet"));
     overviewAction->setCheckable(true);
     overviewAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_1));
     tabGroup->addAction(overviewAction);
 
-    porkMarketAction = new QAction(QIcon(":/icons/porkmarket"), tr("&PorkMarkets"), this);
-    porkMarketAction->setToolTip(tr("PorkMarkets"));
+    porkMarketAction = new QAction(QIcon(":/icons/porkmarket"), tr("&PorkMarket"), this);
+  //  porkMarketAction = new QAction(tr("&PorkMarket"), this);
+    porkMarketAction->setToolTip(tr("PorkMarket"));
     porkMarketAction->setCheckable(true);
     porkMarketAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_6));
     tabGroup->addAction(porkMarketAction);
@@ -350,8 +355,32 @@ void BitcoinGUI::createMenuBar()
 
 void BitcoinGUI::createToolBars()
 {
-    QToolBar *toolbar = addToolBar(tr("Tabs toolbar"));
-    toolbar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+
+  //  addToolBar(Qt::TopToolBarArea, new QToolBar);
+  //  mainWin->addToolBar(Qt::TopToolBarArea, new QToolBar);
+
+   // QToolBar *toolbar = addToolBar(tr("Tabs toolbar"));
+  //  toolbar->setStyleSheet("background-image:url(:/images/toolbar)");
+
+    QDateTime current_date_time = QDateTime::currentDateTime();
+    QString current_date = current_date_time.toString("yyyy-MM-dd hh:mm:ss");
+    QLabel* lab_01 = new QLabel(current_date);
+    QPixmap pixmap1;
+    pixmap1.load(":/images/toolbar");
+    lab_01->setPixmap(pixmap1);
+
+ //   QToolBar *toolbar1 = addToolBar(QT::tr("Tabs toolbar"));
+ //   toolbar1->addWidget(lab_01);
+ //   toolbar1->setMovable(false);
+    addToolBarBreak();
+
+
+    QToolBar *toolbar =  new QToolBar(tr("Tabs Top toolbar"));
+            addToolBar(Qt::LeftToolBarArea,toolbar);
+    toolbar->setIconSize(QSize(131,60));
+
+  //  toolbar->setMovable(false);
+    toolbar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
     toolbar->addAction(overviewAction);
     toolbar->addAction(porkMarketAction);
     toolbar->addAction(sendCoinsAction);
@@ -397,6 +426,7 @@ void BitcoinGUI::setClientModel(ClientModel *clientModel)
         setNumBlocks(clientModel->getNumBlocks(), clientModel->getNumBlocksOfPeers());
         connect(clientModel, SIGNAL(numBlocksChanged(int,int)), this, SLOT(setNumBlocks(int,int)));
 
+    //    connect(clientModel, SIGNAL(showtextChanged(const std::string &message)), porkmarketPage, SLOT(setNumConnections(int)));
         // Report errors from network/worker thread
         connect(clientModel, SIGNAL(error(QString,QString,bool)), this, SLOT(error(QString,QString,bool)));
 
@@ -678,6 +708,13 @@ void BitcoinGUI::askFee(qint64 nFeeRequired, bool *payFee)
           this, tr("Confirm transaction fee"), strMessage,
           QMessageBox::Yes|QMessageBox::Cancel, QMessageBox::Yes);
     *payFee = (retval == QMessageBox::Yes);
+}
+
+
+void BitcoinGUI::updateTestChanged( std::string message)
+{
+    printf("received test BitcoinGUI updateTestChanged\r\n");
+    porkmarketPage->show_text(QString::fromStdString(message));
 }
 
 void BitcoinGUI::incomingTransaction(const QModelIndex & parent, int start, int end)

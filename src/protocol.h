@@ -114,6 +114,7 @@ class CInv
         CInv();
         CInv(int typeIn, const uint256& hashIn);
         CInv(const std::string& strType, const uint256& hashIn);
+        CInv(const std::string& strType);
 
         IMPLEMENT_SERIALIZE
         (
