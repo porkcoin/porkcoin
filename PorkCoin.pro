@@ -255,7 +255,9 @@ HEADERS += src/qt/bitcoingui.h \
     src/sph_simd.h \
     src/sph_types.h \
     src/qt/porkmarkets.h \
-    src/qt/porkmarket.h
+    src/qt/porkmarket.h \
+    src/qt/sendmessagesdialog.h \
+    src/qt/dialog.h
 
 SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/qt/transactiontablemodel.cpp \
@@ -331,7 +333,9 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/shavite.c \
     src/echo.c \
     src/simd.c \
-    src/qt/porkmarket.cpp
+    src/qt/porkmarket.cpp \
+    src/qt/sendmessagesdialog.cpp \
+    src/qt/dialog.cpp
 
 RESOURCES += \
     src/qt/bitcoin.qrc
@@ -349,7 +353,8 @@ FORMS += \
     src/qt/forms/askpassphrasedialog.ui \
     src/qt/forms/rpcconsole.ui \
     src/qt/forms/optionsdialog.ui \
-    src/qt/forms/porkmarket.ui
+    src/qt/forms/porkmarket.ui \
+    src/qt/forms/sendmessagesdialog.ui
 
 contains(USE_QRCODE, 1) {
 HEADERS += src/qt/qrcodedialog.h
@@ -440,7 +445,7 @@ windows:!contains(MINGW_THREAD_BUGFIX, 0) {
 }
 
 macx:HEADERS += src/qt/macdockiconhandler.h
-macx:OBJECTIVE_SOURCES += src/qt/macdockiconhandler.mm
+macx:OBJECTIVE_SOURCES +=
 macx:LIBS += -framework Foundation -framework ApplicationServices -framework AppKit
 macx:DEFINES += MAC_OSX MSG_NOSIGNAL=0
 macx:ICON = src/qt/res/icons/bitcoin.icns

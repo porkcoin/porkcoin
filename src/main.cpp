@@ -1028,19 +1028,6 @@ int64 GetProofOfWorkReward(int nHeight, int64 nFees, CBlockIndex* BlockIndex)
              else
          nSubsidy = 1 * COIN;
     }
-    else     if(nHeight >  1280000&& nHeight <2560000 )                //   16384
-        {
-             if(nHeight % (160 + xxx) ==0) nSubsidy = 4 * COIN;      // 16384
-                 else
-             nSubsidy = 1 * COIN;
-        }
-    else     if(nHeight >  2560000&& nHeight < 5120000)                //   16384
-        {
-             if(nHeight % (160 + xxx) ==0) nSubsidy = 2 * COIN;      // 16384
-                 else
-             nSubsidy = 1 * COIN;
-        }
-
     return nSubsidy + nFees;
 }
 // miner's coin stake reward based on nBits and coin age spent (coin-days)
