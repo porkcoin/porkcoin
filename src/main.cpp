@@ -1043,7 +1043,6 @@ int64 GetProofOfWorkReward(int nHeight, int64 nFees, CBlockIndex* BlockIndex)
 
     return nSubsidy + nFees;
 }
-
 // miner's coin stake reward based on nBits and coin age spent (coin-days)
 // simple algorithm, not depend on the diff
 int64 GetProofOfStakeReward(int64 nCoinAge, unsigned int nBits, unsigned int nTime, int nHeight)
