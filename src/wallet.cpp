@@ -353,7 +353,7 @@ void CWallet::WalletUpdateSpent(const CTransaction &tx)
                     printf("WalletUpdateSpent: bad wtx %s\n", wtx.GetHash().ToString().c_str());
                 else if (!wtx.IsSpent(txin.prevout.n) && IsMine(wtx.vout[txin.prevout.n]))
                 {
-                    printf("WalletUpdateSpent found spent coin %sMNT %s\n", FormatMoney(wtx.GetCredit()).c_str(), wtx.GetHash().ToString().c_str());
+                    printf("WalletUpdateSpent found spent coin %sXPC %s\n", FormatMoney(wtx.GetCredit()).c_str(), wtx.GetHash().ToString().c_str());
                     wtx.MarkSpent(txin.prevout.n);
                     wtx.WriteToDisk();
                     NotifyTransactionChanged(this, txin.prevout.hash, CT_UPDATED);
@@ -519,6 +519,27 @@ bool CWallet::AddToWalletIfInvolvingMe(const CTransaction& tx, const CBlock* pbl
         }
         else
             WalletUpdateSpent(tx);
+    }
+    return false;
+}
+
+bool CWallet::AddToWalletIfInvolvingMe_CWalletTx(const CWalletTx& wtx, const CBlock* pblock, bool fUpdate, bool fFindBlock)
+{
+    uint256 hash = wtx.GetHash();
+    {
+        LOCK(cs_wallet);
+        bool fExisted = mapWallet.count(hash);
+        if (fExisted && !fUpdate) return false;
+        if (fExisted || IsMine(wtx) || IsFromMe(wtx))
+        {
+           // CWalletTx wtx(this,tx);
+            // Get merkle branch if transaction was found in a block
+            if (pblock)
+                wtx.SetMerkleBranch(pblock);
+            return AddToWallet(wtx);
+        }
+        else
+            WalletUpdateSpent(wtx);
     }
     return false;
 }
@@ -804,10 +825,10 @@ int CWallet::ScanForWalletTransactions(CBlockIndex* pindexStart, bool fUpdate)
             CBlock block;
             block.ReadFromDisk(pindex, true);
             BOOST_FOREACH(CTransaction& tx, block.vtx)
+                    if (AddToWalletIfInvolvingMe(tx, &block, fUpdate))
+                        ret++;
+                }
             {
-                if (AddToWalletIfInvolvingMe(tx, &block, fUpdate))
-                    ret++;
-            }
             pindex = pindex->pnext;
         }
     }
@@ -884,22 +905,50 @@ void CWallet::ReacceptWalletTransactions()
 
 void CWalletTx::RelayWalletTransaction(CTxDB& txdb)
 {
+    printf("CWalletTx::RelayWalletTransactio--1");
     BOOST_FOREACH(const CMerkleTx& tx, vtxPrev)
     {
         if (!(tx.IsCoinBase() || tx.IsCoinStake()))
         {
             uint256 hash = tx.GetHash();
             if (!txdb.ContainsTx(hash))
+            {printf("CWalletTx::RelayWalletTransactio--2");
                 RelayMessage(CInv(MSG_TX, hash), (CTransaction)tx);
+            }
         }
     }
     if (!(IsCoinBase() || IsCoinStake()))
     {
         uint256 hash = GetHash();
         if (!txdb.ContainsTx(hash))
-        {
+        {printf("CWalletTx::RelayWalletTransactio--3");
             printf("Relaying wtx %s\n", hash.ToString().substr(0,10).c_str());
             RelayMessage(CInv(MSG_TX, hash), (CTransaction)*this);
+        }
+    }
+}
+
+void CWalletTx::RelayWalletTransaction_message(CTxDB& txdb)
+{
+    printf("CWalletTx::RelayWalletTransaction_message--1");
+    BOOST_FOREACH(const CMerkleTx& tx, vtxPrev)
+    {
+        if (!(tx.IsCoinBase() || tx.IsCoinStake()))
+        {
+            uint256 hash = tx.GetHash();
+            if (!txdb.ContainsTx(hash))
+            {printf("CWalletTx::RelayWalletTransactio--2");
+                RelayMessage(CInv(MSG_TXMSG, hash), *this);
+            }
+        }
+    }
+    if (!(IsCoinBase() || IsCoinStake()))
+    {
+        uint256 hash = GetHash();
+        if (!txdb.ContainsTx(hash))
+        {printf("CWalletTx::RelayWalletTransaction_message--3");
+            printf("Relaying wtx %s\n", hash.ToString().substr(0,10).c_str());
+            RelayMessage(CInv(MSG_TXMSG, hash),*this);
         }
     }
 }
@@ -909,6 +958,13 @@ void CWalletTx::RelayWalletTransaction()
    CTxDB txdb("r");
    RelayWalletTransaction(txdb);
 }
+
+void CWalletTx::RelayWalletTransaction_message()
+{
+   CTxDB txdb("r");
+   RelayWalletTransaction_message(txdb);
+}
+
 
 void CWallet::ResendWalletTransactions()
 {
@@ -1696,6 +1752,64 @@ bool CWallet::CommitTransaction(CWalletTx& wtxNew, CReserveKey& reservekey)
 }
 
 
+
+
+// Call after CreateTransaction unless you want to abort
+bool CWallet::CommitMessage(CWalletTx& wtxNew, CReserveKey& reservekey)
+{
+    printf("-----CommitMessage");
+    {
+        LOCK2(cs_main, cs_wallet);
+        printf("CommitTransaction:\n%s", wtxNew.ToString().c_str());
+        {
+            // This is only to keep the database open to defeat the auto-flush for the
+            // duration of this scope.  This is the only place where this optimization
+            // maybe makes sense; please don't do it anywhere else.
+            CWalletDB* pwalletdb = fFileBacked ? new CWalletDB(strWalletFile,"r") : NULL;
+
+            // Take key pair from key pool so it won't be used again
+            reservekey.KeepKey();
+
+            // Add tx to wallet, because if it has change it's also ours,
+            // otherwise just for transaction history.
+            AddToWallet(wtxNew);
+
+            // Mark old coins as spent
+            set<CWalletTx*> setCoins;
+            BOOST_FOREACH(const CTxIn& txin, wtxNew.vin)
+            {
+                CWalletTx &coin = mapWallet[txin.prevout.hash];
+                coin.BindWallet(this);
+                coin.MarkSpent(txin.prevout.n);
+                coin.WriteToDisk();
+                NotifyTransactionChanged(this, coin.GetHash(), CT_UPDATED);
+            }
+
+            if (fFileBacked)
+                delete pwalletdb;
+        }
+
+        // Track how many getdata requests our transaction gets
+        mapRequestCount[wtxNew.GetHash()] = 0;
+
+        // Broadcast
+        if (!wtxNew.AcceptToMemoryPool())
+        {
+            // This must not fail. The transaction has already been signed and recorded.
+            printf("CommitTransaction() : Error: Transaction not valid");
+            return false;
+        }
+      //  wtxNew.RelayWalletTransaction_message();
+
+        uint256 hash = wtxNew.GetHash();
+       // if (!txdb.ContainsTx(hash))
+        {printf("CWalletTx::RelayWalletTransaction_message--3");
+            printf("Relaying wtx %s\n", hash.ToString().substr(0,10).c_str());
+            RelayMessage(CInv(MSG_TXMSG, hash),wtxNew);
+        }
+    }
+    return true;
+}
 
 
 string CWallet::SendMoney(CScript scriptPubKey, int64 nValue, CWalletTx& wtxNew, bool fAskFee)

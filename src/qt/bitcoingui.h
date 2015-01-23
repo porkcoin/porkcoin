@@ -15,6 +15,7 @@ class PorkMarket;
 class MessagePage;
 class AddressBookPage;
 class SendCoinsDialog;
+class BuyDialog;
 class SignVerifyMessageDialog;
 class Notificator;
 class RPCConsole;
@@ -69,6 +70,7 @@ private:
     AddressBookPage *addressBookPage;
     AddressBookPage *receiveCoinsPage;
     SendCoinsDialog *sendCoinsPage;
+  //  BuyDialog *buyDialogPage;
     SignVerifyMessageDialog *signVerifyMessageDialog;
 
     QLabel *labelEncryptionIcon;

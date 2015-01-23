@@ -164,6 +164,7 @@ public:
     void MarkDirty();
     bool AddToWallet(const CWalletTx& wtxIn);
     bool AddToWalletIfInvolvingMe(const CTransaction& tx, const CBlock* pblock, bool fUpdate = false, bool fFindBlock = false);
+    bool AddToWalletIfInvolvingMe_CWalletTx(const CWalletTx& tx, const CBlock* pblock, bool fUpdate = false, bool fFindBlock = false);
     bool EraseFromWallet(uint256 hash);
     void WalletUpdateSpent(const CTransaction& prevout);
     int ScanForWalletTransactions(CBlockIndex* pindexStart, bool fUpdate = false);
@@ -192,6 +193,9 @@ public:
     bool GetKeyFromPool(CPubKey &key, bool fAllowReuse=true);
     int64 GetOldestKeyPoolTime();
     void GetAllReserveKeys(std::set<CKeyID>& setAddress);
+
+
+    bool CommitMessage(CWalletTx& wtxNew, CReserveKey& reservekey);
 
     std::set< std::set<CTxDestination> > GetAddressGroupings();
     std::map<CTxDestination, int64> GetAddressBalances();
@@ -408,7 +412,10 @@ public:
 
     CWalletTx(const CWallet* pwalletIn, const CTransaction& txIn) : CMerkleTx(txIn)
     {
+        printf("---CWalletTx--------");
+
         Init(pwalletIn);
+          //  mapValue["message"] = "params[2].get_str()";
     }
 
     void Init(const CWallet* pwalletIn)
@@ -686,6 +693,11 @@ public:
 
     void RelayWalletTransaction(CTxDB& txdb);
     void RelayWalletTransaction();
+
+
+    void RelayWalletTransaction_message(CTxDB& txdb);
+    void RelayWalletTransaction_message();
+  //  bool AcceptToMemoryPool();
 };
 
 

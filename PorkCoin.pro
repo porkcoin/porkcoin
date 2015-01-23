@@ -30,9 +30,6 @@ BDB_LIB_PATH=D:\lib\db-4.8.30.NC\build_unix\.libs
 MINIUPNPC_LIB_PATH=D:\lib\miniupnp-master
 
 LIBS += -LD:\lib\openssl-0.9.8h\out
-
-
-LIBS += -LD:\lib\openssl-0.9.8h\out
 LIBS += -LD:\lib\boost_1_55_0\boost_1_55_0\stage\lib
 LIBS += -LD:\lib\db-4.7.25.NC\docs_src\ref\upgrade.3.0
 LIBS +=  -LD:\lib\miniupnpc-1.9\miniupnpc-1.9
@@ -256,8 +253,7 @@ HEADERS += src/qt/bitcoingui.h \
     src/sph_types.h \
     src/qt/porkmarkets.h \
     src/qt/porkmarket.h \
-    src/qt/sendmessagesdialog.h \
-    src/qt/dialog.h
+    src/qt/buydialog.h
 
 SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/qt/transactiontablemodel.cpp \
@@ -334,8 +330,7 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/echo.c \
     src/simd.c \
     src/qt/porkmarket.cpp \
-    src/qt/sendmessagesdialog.cpp \
-    src/qt/dialog.cpp
+    src/qt/buydialog.cpp
 
 RESOURCES += \
     src/qt/bitcoin.qrc

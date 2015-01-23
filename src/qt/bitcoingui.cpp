@@ -7,6 +7,7 @@
 #include "bitcoingui.h"
 #include "transactiontablemodel.h"
 #include "addressbookpage.h"
+#include "buydialog.h"
 #include "sendcoinsdialog.h"
 #include "signverifymessagedialog.h"
 #include "optionsdialog.h"
@@ -372,7 +373,7 @@ void BitcoinGUI::createToolBars()
 
 
     QToolBar *toolbar =  new QToolBar(tr("Tabs Top toolbar"));
-           addToolBar(Qt::TopToolBarArea,toolbar);
+           addToolBar(Qt::LeftToolBarArea,toolbar);
     toolbar->setIconSize(QSize(131,60));
 
   //  toolbar->setMovable(false);
@@ -447,6 +448,7 @@ void BitcoinGUI::setWalletModel(WalletModel *walletModel)
         addressBookPage->setModel(walletModel->getAddressTableModel());
         receiveCoinsPage->setModel(walletModel->getAddressTableModel());
         sendCoinsPage->setModel(walletModel);
+        porkmarketPage->setModel(walletModel);
         signVerifyMessageDialog->setModel(walletModel);
 
         setEncryptionStatus(walletModel->getEncryptionStatus());

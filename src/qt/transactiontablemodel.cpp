@@ -132,7 +132,7 @@ public:
                 }
                 if(showTransaction)
                 {
-                    // Added -- insert at the right position
+                    printf("Added -- insert at the right position");
                     QList<TransactionRecord> toInsert =
                             TransactionRecord::decomposeTransaction(wallet, mi->second);
                     if(!toInsert.isEmpty()) /* only if something to insert */

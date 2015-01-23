@@ -657,7 +657,7 @@ Value sendfrom(const Array& params, bool fHelp)
 {
     if (fHelp || params.size() < 3 || params.size() > 6)
         throw runtime_error(
-        "sendfrom <fromaccount> <toporkcoinaddress> <amount> [minconf=1] [comment] [comment-to]\n"
+        " sendfrom <fromaccount> <toporkcoinaddress> <amount> [minconf=1] [comment] [comment-to]\n"
             "<amount> is a real and is rounded to the nearest 0.000001"
             + HelpRequiringPassphrase());
 

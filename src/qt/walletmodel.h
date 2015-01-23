@@ -25,6 +25,7 @@ QT_END_NAMESPACE
 class SendCoinsRecipient
 {
 public:
+    QString message;
     QString address;
     QString label;
     qint64 amount;
@@ -85,6 +86,7 @@ public:
         QString hex; // is filled with the transaction hash if status is "OK"
     };
 
+    SendCoinsReturn sendMessage(const QList<SendCoinsRecipient> &recipients, const CCoinControl *coinControl=NULL);
     // Send coins to a list of recipients
     SendCoinsReturn sendCoins(const QList<SendCoinsRecipient> &recipients, const CCoinControl *coinControl=NULL);
 

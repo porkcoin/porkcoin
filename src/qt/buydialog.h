@@ -49,66 +49,34 @@ class QLabel;
 class QErrorMessage;
 QT_END_NAMESPACE
 
+
+class WalletModel;
+class SendCoinsEntry;
+class SendCoinsRecipient;
 class DialogOptionsWidget;
 
 namespace Ui {
     class SendMessagesDialog;
 }
 
-class Dialog : public QDialog
+class BuyDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    Dialog(QString img,QString content,QString price,QString address,QWidget *parent = 0);
+    BuyDialog(WalletModel *model,QString img,QString content,QString price,QString address,QWidget *parent = 0);
 
+   // void setModel(WalletModel *model);
 private:
     Ui::SendMessagesDialog *ui;
+    WalletModel *model;
+    QLabel *image;
 
 
 private slots:
-    void setInteger();
-    void setDouble();
-    void setItem();
-    void setText();
-    void setMultiLineText();
-    void setColor();
-    void setFont();
-    void setExistingDirectory();
-    void setOpenFileName();
-    void setOpenFileNames();
-    void setSaveFileName();
-    void criticalMessage();
-    void informationMessage();
-    void questionMessage();
-    void warningMessage();
-    void errorMessage();
+    void on_pushButton_clicked();
 
-private:
-    QLabel *image;
- //   QLabel *doubleLabel;
 
-    QLabel *integerLabel;
-    QLabel *doubleLabel;
-    QLabel *itemLabel;
-    QLabel *textLabel;
-    QLabel *multiLineTextLabel;
-    QLabel *colorLabel;
-    QLabel *fontLabel;
-    QLabel *directoryLabel;
-    QLabel *openFileNameLabel;
-    QLabel *openFileNamesLabel;
-    QLabel *saveFileNameLabel;
-    QLabel *criticalLabel;
-    QLabel *informationLabel;
-    QLabel *questionLabel;
-    QLabel *warningLabel;
-    QLabel *errorLabel;
-    QErrorMessage *errorMessageDialog;
-    DialogOptionsWidget *fileDialogOptionsWidget;
-    DialogOptionsWidget *colorDialogOptionsWidget;
-    DialogOptionsWidget *fontDialogOptionsWidget;
-    QString openFilesPath;
 };
 
 #endif

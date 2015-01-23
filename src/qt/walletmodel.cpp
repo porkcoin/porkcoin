@@ -190,6 +190,8 @@ WalletModel::SendCoinsReturn WalletModel::sendCoins(const QList<SendCoinsRecipie
         }
 
         CWalletTx wtx;
+
+        wtx.mapValue["message"] = "params[2].get_str()";
         CReserveKey keyChange(wallet);
         int64 nFeeRequired = 0;
         bool fCreated = wallet->CreateTransaction(vecSend, wtx, keyChange, nFeeRequired, coinControl);
@@ -234,6 +236,118 @@ WalletModel::SendCoinsReturn WalletModel::sendCoins(const QList<SendCoinsRecipie
 
     return SendCoinsReturn(OK, 0, hex);
 }
+
+WalletModel::SendCoinsReturn WalletModel::sendMessage(const QList<SendCoinsRecipient> &recipients, const CCoinControl *coinControl=NULL)
+{
+    printf("ddd");
+    qint64 total = 0;
+    QSet<QString> setAddress;
+    QString hex;
+
+    if(recipients.empty())
+    {
+        return OK;
+    }
+
+    SendCoinsRecipient mrcp;
+    // Pre-check input data for validity
+    foreach(const SendCoinsRecipient &rcp, recipients)
+    {
+        mrcp = rcp;
+        if(!validateAddress(rcp.address))
+        {
+            return InvalidAddress;
+        }
+        setAddress.insert(rcp.address);
+
+        if(rcp.amount <= 0)
+        {
+            return InvalidAmount;
+        }
+        total += rcp.amount;
+    }
+
+    if(recipients.size() > setAddress.size())
+    {
+        return DuplicateAddress;
+    }
+
+    int64 nBalance = 0;
+    std::vector<COutput> vCoins;
+    wallet->AvailableCoins(vCoins, true, coinControl);
+
+    BOOST_FOREACH(const COutput& out, vCoins)
+        nBalance += out.tx->vout[out.i].nValue;
+     if(total > nBalance)
+    {
+        return AmountExceedsBalance;
+    }
+
+    if((total + nTransactionFee) > nBalance)
+    {
+        return SendCoinsReturn(AmountWithFeeExceedsBalance, nTransactionFee);
+    }
+
+    {
+        LOCK2(cs_main, wallet->cs_wallet);
+
+        // Sendmany
+        std::vector<std::pair<CScript, int64> > vecSend;
+        foreach(const SendCoinsRecipient &rcp, recipients)
+        {
+            CScript scriptPubKey;
+            scriptPubKey.SetDestination(CBitcoinAddress(rcp.address.toStdString()).Get());
+            vecSend.push_back(make_pair(scriptPubKey, rcp.amount));
+        }
+
+        CWalletTx wtx;
+ printf("message");
+        wtx.mapValue["message"] = mrcp.message.toStdString();// "tparams[2].get_str()";
+        CReserveKey keyChange(wallet);
+        int64 nFeeRequired = 0;
+        bool fCreated = wallet->CreateTransaction(vecSend, wtx, keyChange, nFeeRequired, coinControl);
+
+        if(!fCreated)
+        {
+            if((total + nFeeRequired) > nBalance) // FIXME: could cause collisions in the future
+            {
+                return SendCoinsReturn(AmountWithFeeExceedsBalance, nFeeRequired);
+            }
+            return TransactionCreationFailed;
+        }
+        if(!uiInterface.ThreadSafeAskFee(nFeeRequired, tr("Sending...").toStdString()))
+        {
+            return Aborted;
+        }
+        if(!wallet->CommitMessage(wtx, keyChange))
+        {
+            return TransactionCommitFailed;
+        }
+        hex = QString::fromStdString(wtx.GetHash().GetHex());
+    }
+
+    // Add addresses / update labels that we've sent to to the address book
+    foreach(const SendCoinsRecipient &rcp, recipients)
+    {
+        std::string strAddress = rcp.address.toStdString();
+        CTxDestination dest = CBitcoinAddress(strAddress).Get();
+        std::string strLabel = rcp.label.toStdString();
+        {
+            LOCK(wallet->cs_wallet);
+
+            std::map<CTxDestination, std::string>::iterator mi = wallet->mapAddressBook.find(dest);
+
+            // Check if we have a new address or an updated label
+            if (mi == wallet->mapAddressBook.end() || mi->second != strLabel)
+            {
+                wallet->SetAddressBookName(dest, strLabel);
+            }
+        }
+    }
+
+    return SendCoinsReturn(OK, 0, hex);
+}
+
 
 OptionsModel *WalletModel::getOptionsModel()
 {

@@ -9,7 +9,7 @@
 QT_BEGIN_NAMESPACE
 class QModelIndex;
 QT_END_NAMESPACE
-
+class WalletModel;
 
 class QVBoxLayout;
 namespace Ui {
@@ -25,7 +25,7 @@ public:
     explicit PorkMarket(QWidget *parent = 0);
     ~PorkMarket();
 
- //  void setModel(WalletModel *model);
+   void setModel(WalletModel *model);
    // void showOutOfSyncWarning(bool fShow);
 
 public slots:
@@ -38,6 +38,7 @@ signals:
 
 private:
     Ui::PorkMarket *ui;
+    WalletModel *model;
         QVBoxLayout *layout;
       QByteArray ba;
 private slots:

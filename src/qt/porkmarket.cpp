@@ -9,14 +9,14 @@
 #include "guiutil.h"
 #include "guiconstants.h"
 #include "askpassphrasedialog.h"
-#include "sendmessagesdialog.h"
+//#include "sendmessagesdialog.h"
 #include "net.h"
 #include <QAbstractItemDelegate>
 #include <QPainter>
 #include <QLabel>
 #include <QFileDialog>
 #include <QBuffer>
-#include "dialog.h"
+#include "buydialog.h"
 
 PorkMarket::PorkMarket(QWidget *parent) :
     QWidget(parent),
@@ -68,6 +68,13 @@ PorkMarket::PorkMarket(QWidget *parent) :
 PorkMarket::~PorkMarket()
 {
     delete ui;
+}
+
+void PorkMarket::setModel(WalletModel *model)
+{
+    this->model = model;
+    if(!model)
+        return;
 }
 
 void PorkMarket::on_pushButton_clicked()
@@ -153,7 +160,7 @@ void PorkMarket::on_pushButton_2_clicked()
 
 void PorkMarket::connectFri(QListWidgetItem * w)
 {
-   Dialog dialog(w->data(1).toString(),w->data(4).toString(),w->data(5).toString(),w->data(3).toString());
+   BuyDialog dialog(model,w->data(1).toString(),w->data(4).toString(),w->data(5).toString(),w->data(3).toString());
    dialog.exec();
    return;
 }

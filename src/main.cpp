@@ -147,6 +147,15 @@ void SyncWithWallets(const CTransaction& tx, const CBlock* pblock, bool fUpdate,
         pwallet->AddToWalletIfInvolvingMe(tx, pblock, fUpdate);
 }
 
+// make sure all wallets know about the given transaction, in the given block
+void SyncWithWallets_CWalletTx(const CWalletTx& wtx, const CBlock* pblock, bool fUpdate, bool fConnect)
+{
+
+
+    BOOST_FOREACH(CWallet* pwallet, setpwalletRegistered)
+        pwallet->AddToWalletIfInvolvingMe_CWalletTx(wtx, pblock, fUpdate);
+}
+
 // notify wallets about a new best chain
 void static SetBestChain(const CBlockLocator& loc)
 {
@@ -688,6 +697,7 @@ bool CTxMemPool::accept(CTxDB& txdb, CTransaction &tx, bool fCheckInputs,
 
 bool CTransaction::AcceptToMemoryPool(CTxDB& txdb, bool fCheckInputs, bool* pfMissingInputs)
 {
+      printf("CTxMemPool::accept() CTransaction::AcceptToMemoryPool\n");
     return mempool.accept(txdb, *this, fCheckInputs, pfMissingInputs);
 }
 
@@ -822,6 +832,7 @@ bool CWalletTx::AcceptWalletTransaction()
     CTxDB txdb("r");
     return AcceptWalletTransaction(txdb);
 }
+
 
 
 int CTxIndex::GetDepthInMainChain() const
@@ -2927,6 +2938,9 @@ bool static AlreadyHave(CTxDB& txdb, const CInv& inv)
     case MSG_BLOCK:
         return mapBlockIndex.count(inv.hash) ||
                mapOrphanBlocks.count(inv.hash);
+    case MSG_TXMSG:
+        return mapBlockIndex.count(inv.hash) ||
+               mapOrphanBlocks.count(inv.hash);
     }
     // Don't know what it is, just say we already got one
     return true;
@@ -2946,7 +2960,7 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
     RandAddSeedPerfmon();
     if (fDebug)
         printf("received: %s (%"PRIszu" bytes)\n", strCommand.c_str(), vRecv.size());
-    if (mapArgs.count("-dropmessagestest") && GetRand(atoi(mapArgs["-dropmessagestest"])) == 0)
+    if (mapArgs.count ("-dropmessagestest") && GetRand(atoi(mapArgs["-dropmessagestest"])) == 0)
     {
         printf("dropmessagestest DROPPING RECV MESSAGE\n");
         return true;
@@ -3371,6 +3385,7 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
 
     else if (strCommand == "tx")
     {
+        printf("tx");
         vector<uint256> vWorkQueue;
         vector<uint256> vEraseQueue;
         CDataStream vMsg(vRecv);
@@ -3452,6 +3467,80 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
         if (ProcessBlock(pfrom, &block))
             mapAlreadyAskedFor.erase(inv);
         if (block.nDoS) pfrom->Misbehaving(block.nDoS);
+    }
+
+
+    else if (strCommand == "msg")
+    {
+        printf("msg\r\n");
+        vector<uint256> vWorkQueue;
+        vector<uint256> vEraseQueue;
+        CDataStream vMsg(vRecv);
+        CTxDB txdb("r");
+        CWalletTx wtx;
+        CTransaction tx;
+        vRecv >> tx;
+        vMsg >> wtx;
+        printf("tx");
+        CInv inv(MSG_TXMSG, tx.GetHash());
+        pfrom->AddInventoryKnown(inv);
+
+        bool fMissingInputs = false;
+        if (tx.AcceptToMemoryPool(txdb, true, &fMissingInputs))
+        {
+            SyncWithWallets_CWalletTx(wtx, NULL, true);
+            RelayMessage(inv, vMsg);
+            mapAlreadyAskedFor.erase(inv);
+            vWorkQueue.push_back(inv.hash);
+            vEraseQueue.push_back(inv.hash);
+
+            // Recursively process any orphan transactions that depended on this one
+            for (unsigned int i = 0; i < vWorkQueue.size(); i++)
+            {
+                uint256 hashPrev = vWorkQueue[i];
+                for (map<uint256, CDataStream*>::iterator mi = mapOrphanTransactionsByPrev[hashPrev].begin();
+                     mi != mapOrphanTransactionsByPrev[hashPrev].end();
+                     ++mi)
+                {
+                    const CDataStream& vMsg = *((*mi).second);
+                    CTransaction tx;
+                  //  CWalletTx wtx;
+                    CDataStream(vMsg) >> tx;
+                    CDataStream(vMsg) >> wtx;
+                    CInv inv(MSG_TXMSG, tx.GetHash()); printf("tx");
+                    bool fMissingInputs2 = false;
+
+                    if (tx.AcceptToMemoryPool(txdb, true, &fMissingInputs2))
+                    {
+                        printf("   accepted orphan txmsg %s\n", inv.hash.ToString().substr(0,10).c_str());
+                        SyncWithWallets_CWalletTx(wtx, NULL, true);
+                        RelayMessage(inv, vMsg);
+                        mapAlreadyAskedFor.erase(inv);
+                        vWorkQueue.push_back(inv.hash);
+                        vEraseQueue.push_back(inv.hash);
+                    }
+                    else if (!fMissingInputs2)
+                    {
+                        // invalid orphan
+                        vEraseQueue.push_back(inv.hash);
+                        printf("   removed invalid orphan txmsg %s\n", inv.hash.ToString().substr(0,10).c_str());
+                    }
+                }
+            }
+
+            BOOST_FOREACH(uint256 hash, vEraseQueue)
+                EraseOrphanTx(hash);
+        }
+        else if (fMissingInputs)
+        {
+            AddOrphanTx(vMsg);
+
+            // DoS prevention: do not allow mapOrphanTransactions to grow unbounded
+            unsigned int nEvicted = LimitOrphanTxSize(MAX_ORPHAN_TRANSACTIONS);
+            if (nEvicted > 0)
+                printf("mapOrphan overflow, removed %u tx\n", nEvicted);
+        }
+        if (tx.nDoS) pfrom->Misbehaving(tx.nDoS);
     }
 
 

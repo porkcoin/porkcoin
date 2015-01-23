@@ -134,6 +134,8 @@ SendCoinsRecipient SendCoinsEntry::getValue()
     rv.label = ui->addAsLabel->text();
     rv.amount = ui->payAmount->value();
 
+     rv.message = "ui->payAmount->value()";
+
     return rv;
 }
 
