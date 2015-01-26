@@ -654,12 +654,14 @@ inline void RelayInventory(const CInv& inv)
     }
 }
 
+
 template<typename T>
 void RelayMessage(const CInv& inv, const T& a)
 {
     CDataStream ss(SER_NETWORK, PROTOCOL_VERSION);
     ss.reserve(10000);
     ss << a;
+
     RelayMessage(inv, ss);
 }
 

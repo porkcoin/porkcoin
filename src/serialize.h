@@ -642,6 +642,7 @@ unsigned int GetSerializeSize(const std::set<K, Pred, A>& m, int nType, int nVer
 template<typename Stream, typename K, typename Pred, typename A>
 void Serialize(Stream& os, const std::set<K, Pred, A>& m, int nType, int nVersion)
 {
+    printf("Serializes");
     WriteCompactSize(os, m.size());
     for (typename std::set<K, Pred, A>::const_iterator it = m.begin(); it != m.end(); ++it)
         Serialize(os, (*it), nType, nVersion);

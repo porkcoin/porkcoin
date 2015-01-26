@@ -79,6 +79,12 @@ void PorkMarket::setModel(WalletModel *model)
 
 void PorkMarket::on_pushButton_clicked()
 {
+    QList<SendCoinsRecipient> recipients;
+    bool valid = true;
+
+    if(!model)
+        return;
+
     QString str= ui->textEdit->toPlainText();
     QString img = QString(ba.toBase64());
 
@@ -86,8 +92,8 @@ void PorkMarket::on_pushButton_clicked()
     QImage  ima;
     ima.loadFromData(QByteArray::fromBase64(img.toLatin1()));
 
-    QString address = ui->lineEdit->text();
-    QString price = ui->lineEdit_2->text();
+    QString address = ui->address->text();
+    QString price = ui->price->text();
     QString mes= str + "|"+img+ "|"+price+ "|"+address;
     if(price.isEmpty()||address.isEmpty()||img.isEmpty())return;
       RelayMyMessage("test",mes.toStdString().c_str());

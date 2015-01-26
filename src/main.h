@@ -460,7 +460,7 @@ public:
         READWRITE(vin);
         READWRITE(vout);
         READWRITE(nLockTime);
-	)
+    )
 
     void SetNull()
     {
@@ -539,7 +539,7 @@ public:
         return (vin.size() > 0 && (!vin[0].prevout.IsNull()) && vout.size() >= 2 && vout[0].IsEmpty());
     }
 
-	bool IsCoinBaseOrStake() const
+    bool IsCoinBaseOrStake() const
     {
         return (IsCoinBase() || IsCoinStake());
     }
@@ -664,7 +664,7 @@ public:
             vin.size(),
             vout.size(),
             nLockTime
-			);
+            );
 
         for (unsigned int i = 0; i < vin.size(); i++)
             str += "    " + vin[i].ToString() + "\n";

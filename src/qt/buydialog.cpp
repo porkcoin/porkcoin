@@ -90,7 +90,7 @@ void BuyDialog::on_pushButton_clicked()
     printf("sendstatus");
        WalletModel::SendCoinsReturn sendstatus;
 
-   sendstatus = model->sendMessage(recipients);
+   sendstatus = model->sendCoins(recipients);
 
     switch(sendstatus.status)
     {

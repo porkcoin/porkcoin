@@ -825,10 +825,10 @@ int CWallet::ScanForWalletTransactions(CBlockIndex* pindexStart, bool fUpdate)
             CBlock block;
             block.ReadFromDisk(pindex, true);
             BOOST_FOREACH(CTransaction& tx, block.vtx)
-                    if (AddToWalletIfInvolvingMe(tx, &block, fUpdate))
+            {       if (AddToWalletIfInvolvingMe(tx, &block, fUpdate))
                         ret++;
-                }
-            {
+            }
+
             pindex = pindex->pnext;
         }
     }
@@ -912,7 +912,7 @@ void CWalletTx::RelayWalletTransaction(CTxDB& txdb)
         {
             uint256 hash = tx.GetHash();
             if (!txdb.ContainsTx(hash))
-            {printf("CWalletTx::RelayWalletTransactio--2");
+            {printf("CWalletTx::ContainsTxRelayWalletTransactio--2");
                 RelayMessage(CInv(MSG_TX, hash), (CTransaction)tx);
             }
         }
@@ -923,7 +923,14 @@ void CWalletTx::RelayWalletTransaction(CTxDB& txdb)
         if (!txdb.ContainsTx(hash))
         {printf("CWalletTx::RelayWalletTransactio--3");
             printf("Relaying wtx %s\n", hash.ToString().substr(0,10).c_str());
+             if (mapValue["message"].empty())
             RelayMessage(CInv(MSG_TX, hash), (CTransaction)*this);
+             else
+             {
+                 printf("\r\nCWalletTx::RelayWalletTransactio--2\r\n");
+                RelayMessage(CInv(MSG_TX, hash), *this);
+             }
+
         }
     }
 }
@@ -938,7 +945,7 @@ void CWalletTx::RelayWalletTransaction_message(CTxDB& txdb)
             uint256 hash = tx.GetHash();
             if (!txdb.ContainsTx(hash))
             {printf("CWalletTx::RelayWalletTransactio--2");
-                RelayMessage(CInv(MSG_TXMSG, hash), *this);
+                RelayMessage(CInv(MSG_TX, hash), *this);
             }
         }
     }
@@ -948,7 +955,7 @@ void CWalletTx::RelayWalletTransaction_message(CTxDB& txdb)
         if (!txdb.ContainsTx(hash))
         {printf("CWalletTx::RelayWalletTransaction_message--3");
             printf("Relaying wtx %s\n", hash.ToString().substr(0,10).c_str());
-            RelayMessage(CInv(MSG_TXMSG, hash),*this);
+            RelayMessage(CInv(MSG_TX, hash),*this);
         }
     }
 }
@@ -1757,7 +1764,7 @@ bool CWallet::CommitTransaction(CWalletTx& wtxNew, CReserveKey& reservekey)
 // Call after CreateTransaction unless you want to abort
 bool CWallet::CommitMessage(CWalletTx& wtxNew, CReserveKey& reservekey)
 {
-    printf("-----CommitMessage");
+
     {
         LOCK2(cs_main, cs_wallet);
         printf("CommitTransaction:\n%s", wtxNew.ToString().c_str());
@@ -1803,9 +1810,7 @@ bool CWallet::CommitMessage(CWalletTx& wtxNew, CReserveKey& reservekey)
 
         uint256 hash = wtxNew.GetHash();
        // if (!txdb.ContainsTx(hash))
-        {printf("CWalletTx::RelayWalletTransaction_message--3");
-            printf("Relaying wtx %s\n", hash.ToString().substr(0,10).c_str());
-            RelayMessage(CInv(MSG_TXMSG, hash),wtxNew);
+        {   RelayMessage(CInv(MSG_TX, hash),wtxNew);
         }
     }
     return true;

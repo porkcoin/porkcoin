@@ -88,6 +88,7 @@ void SendCoinsEntry::clear()
     ui->addAsLabel->clear();
     ui->payAmount->clear();
     ui->payTo->setFocus();
+    ui->lineEdit->clear();
     // update the display unit, to not use the default ("BTC")
     updateDisplayUnit();
 }
@@ -134,7 +135,7 @@ SendCoinsRecipient SendCoinsEntry::getValue()
     rv.label = ui->addAsLabel->text();
     rv.amount = ui->payAmount->value();
 
-     rv.message = "ui->payAmount->value()";
+    rv.message = ui->lineEdit->text();// "ui->payAmount->value()";
 
     return rv;
 }

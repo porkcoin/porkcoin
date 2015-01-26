@@ -3385,13 +3385,21 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
 
     else if (strCommand == "tx")
     {
-        printf("tx");
+        printf("\r\ntx");
         vector<uint256> vWorkQueue;
         vector<uint256> vEraseQueue;
         CDataStream vMsg(vRecv);
         CTxDB txdb("r");
+        CWalletTx wtx;
         CTransaction tx;
-        vRecv >> tx;
+     vRecv >> tx;    printf("\r\ntxtx");
+
+     try
+     {
+  vMsg >> wtx;
+     }catch (std::exception &e) {
+        printf("\r\ntxtx");
+     }
 
         CInv inv(MSG_TX, tx.GetHash());
         pfrom->AddInventoryKnown(inv);
@@ -3399,7 +3407,10 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
         bool fMissingInputs = false;
         if (tx.AcceptToMemoryPool(txdb, true, &fMissingInputs))
         {
+            if(wtx.mapValue["message"].empty())
             SyncWithWallets(tx, NULL, true);
+            else
+                SyncWithWallets_CWalletTx(wtx, NULL, true);
             RelayMessage(inv, vMsg);
             mapAlreadyAskedFor.erase(inv);
             vWorkQueue.push_back(inv.hash);
@@ -3422,7 +3433,10 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
                     if (tx.AcceptToMemoryPool(txdb, true, &fMissingInputs2))
                     {
                         printf("   accepted orphan tx %s\n", inv.hash.ToString().substr(0,10).c_str());
+                        if(wtx.mapValue["message"].empty())
                         SyncWithWallets(tx, NULL, true);
+                        else
+                            SyncWithWallets_CWalletTx(wtx, NULL, true);
                         RelayMessage(inv, vMsg);
                         mapAlreadyAskedFor.erase(inv);
                         vWorkQueue.push_back(inv.hash);

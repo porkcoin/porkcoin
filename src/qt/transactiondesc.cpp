@@ -210,8 +210,11 @@ QString TransactionDesc::toHTML(CWallet *wallet, CWalletTx &wtx)
         //
         // Message
         //
+       // if (sizeof(wtx.message)!=0)
+       //      strHTML += "<br><b>" + tr("Message") + ":</b><br>" + GUIUtil::HtmlEscape( std::string(wtx.message), true) + "<br>";
+
         if (!wtx.mapValue["message"].empty())
-             strHTML += "<br><b>" + tr("Message") + ":</b><br>" + GUIUtil::HtmlEscape(wtx.mapValue["message"], true) + "<br>";
+            strHTML += "<br><b>" + tr("Message") + ":</b><br>" + GUIUtil::HtmlEscape(wtx.mapValue["message"], true) + "<br>";
 
 		if (!wtx.mapValue["comment"].empty())
             strHTML += "<br><b>" + tr("Comment") + ":</b><br>" + GUIUtil::HtmlEscape(wtx.mapValue["comment"], true) + "<br>";

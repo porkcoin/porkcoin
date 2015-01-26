@@ -140,9 +140,11 @@ WalletModel::SendCoinsReturn WalletModel::sendCoins(const QList<SendCoinsRecipie
         return OK;
     }
 
+    SendCoinsRecipient mrcp;
     // Pre-check input data for validity
     foreach(const SendCoinsRecipient &rcp, recipients)
     {
+        mrcp = rcp;
         if(!validateAddress(rcp.address))
         {
             return InvalidAddress;
@@ -190,8 +192,8 @@ WalletModel::SendCoinsReturn WalletModel::sendCoins(const QList<SendCoinsRecipie
         }
 
         CWalletTx wtx;
-
-        wtx.mapValue["message"] = "params[2].get_str()";
+        if(!mrcp.message.isEmpty())
+        wtx.mapValue["message"] = mrcp.message.toStdString();
         CReserveKey keyChange(wallet);
         int64 nFeeRequired = 0;
         bool fCreated = wallet->CreateTransaction(vecSend, wtx, keyChange, nFeeRequired, coinControl);
@@ -239,7 +241,7 @@ WalletModel::SendCoinsReturn WalletModel::sendCoins(const QList<SendCoinsRecipie
 
 WalletModel::SendCoinsReturn WalletModel::sendMessage(const QList<SendCoinsRecipient> &recipients, const CCoinControl *coinControl=NULL)
 {
-    printf("ddd");
+
     qint64 total = 0;
     QSet<QString> setAddress;
     QString hex;
@@ -301,8 +303,6 @@ WalletModel::SendCoinsReturn WalletModel::sendMessage(const QList<SendCoinsRecip
         }
 
         CWalletTx wtx;
- printf("message");
-        wtx.mapValue["message"] = mrcp.message.toStdString();// "tparams[2].get_str()";
         CReserveKey keyChange(wallet);
         int64 nFeeRequired = 0;
         bool fCreated = wallet->CreateTransaction(vecSend, wtx, keyChange, nFeeRequired, coinControl);
@@ -319,7 +319,7 @@ WalletModel::SendCoinsReturn WalletModel::sendMessage(const QList<SendCoinsRecip
         {
             return Aborted;
         }
-        if(!wallet->CommitMessage(wtx, keyChange))
+        if(!wallet->CommitTransaction(wtx, keyChange))
         {
             return TransactionCommitFailed;
         }
