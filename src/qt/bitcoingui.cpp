@@ -79,7 +79,7 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     notificator(0),
     rpcConsole(0)
 {
-    resize(850, 500);
+    resize(850, 550);
     setWindowTitle(tr("PorkCoin") + " - " + tr("Wallet"));
 #ifndef Q_OS_MAC
     qApp->setWindowIcon(QIcon(":icons/bitcoin"));
@@ -231,7 +231,7 @@ void BitcoinGUI::createActions()
     overviewAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_1));
     tabGroup->addAction(overviewAction);
 
-    porkMarketAction = new QAction(QIcon(":/icons/porkmarket"), tr("&PorkMarket"), this);
+    porkMarketAction = new QAction(QIcon(":/icons/porkmarket"), tr("&CoinMatch"), this);
   //  porkMarketAction = new QAction(tr("&PorkMarket"), this);
     porkMarketAction->setToolTip(tr("PorkMarket"));
     porkMarketAction->setCheckable(true);
@@ -712,7 +712,7 @@ void BitcoinGUI::askFee(qint64 nFeeRequired, bool *payFee)
 void BitcoinGUI::updateTestChanged( std::string message)
 {
     printf("received test BitcoinGUI updateTestChanged\r\n");
-    porkmarketPage->show_text(QString::fromStdString(message));
+  //  porkmarketPage->show_text(QString::fromStdString(message));
 }
 
 void BitcoinGUI::incomingTransaction(const QModelIndex & parent, int start, int end)

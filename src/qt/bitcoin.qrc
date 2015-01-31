@@ -125,4 +125,30 @@
         <file alias="zh">locale/bitcoin_zh_CN.qm</file>
         <file>locale/bitcoin_zh_TW.qm</file>
     </qresource>
+    <qresource prefix="/pic">
+        <file>res/pic/1.png</file>
+        <file>res/pic/2.png</file>
+        <file>res/pic/3.png</file>
+        <file>res/pic/4.png</file>
+        <file>res/pic/5.png</file>
+        <file>res/pic/6.png</file>
+        <file>res/pic/7.png</file>
+        <file>res/pic/8.png</file>
+        <file>res/pic/9.png</file>
+        <file>res/pic/10.png</file>
+        <file>res/pic/11.png</file>
+        <file>res/pic/12.png</file>
+        <file>res/pic/13.png</file>
+        <file>res/pic/14.png</file>
+        <file>res/pic/15.png</file>
+        <file>res/pic/16.png</file>
+        <file>res/pic/17.png</file>
+        <file>res/pic/18.png</file>
+        <file>res/pic/19.png</file>
+        <file>res/pic/20.png</file>
+        <file>res/pic/21.png</file>
+        <file>res/pic/22.png</file>
+        <file>res/pic/23.png</file>
+        <file>res/pic/0.png</file>
+    </qresource>
 </RCC>

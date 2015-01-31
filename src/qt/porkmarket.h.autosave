@@ -64,37 +64,36 @@ private slots:
     void on_PromptButton_clicked();
     void on_resetButton_clicked();
 private:
-   QList<QPixmap> ph_list;
-   QList<int> tmplist;
-   int arr_map[ROWCOUNT+2][COLCOUNT+2];
-   QVector<QLine> lines;
-   QVector<QPoint> rects;
-
+    QList<QPixmap> ph_list;
+    QList<int> tmplist;
+    int arr_map[ROWCOUNT+2][COLCOUNT+2];
+    QVector<QLine> lines;
+    QVector<QPoint> rects;
+    
     QProgressBar *progressBar;
     QPushButton *startPushButton;
     QPushButton *PromptPushButton;
     QPushButton *resetPushButton;
+    
+    QTimer* timer;
+    int  counter;
+    //地图行、列数
+    int map_row;
+    int map_col;
 
-       QTimer* timer;
-int  counter;
-   //地图行、列数
-   int map_row;
-   int map_col;
-
-  // bool isDrawPic; //是否画图
-  bool isRect;
-  bool isStart;
-   int clickCount; //click count
-
-   int clickX0;
-   int clickY0;
-   int clickX1;
-   int clickY1;
-
-   int sumCount;
+    bool isRect;
+    bool isStart;
+    int clickCount; //click count
+    
+    int clickX0;
+    int clickY0;
+    int clickX1;
+    int clickY1;
+    
+    int sumCount;
     void connectFri(QListWidgetItem * );
     void on_pushButton_clicked();
-
+    
     void on_pushButton_2_clicked();
 };
 

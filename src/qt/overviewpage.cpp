@@ -115,6 +115,7 @@ OverviewPage::OverviewPage(QWidget *parent) :
     ui->labelTransactionsStatus->setText("(" + tr("out of sync") + ")");
 
     QPixmap pixmap;
+
      pixmap.load(":/images/splash");
  //   pixmap.scaled(400,600);
  //    QPalette   palette;

@@ -253,7 +253,8 @@ HEADERS += src/qt/bitcoingui.h \
     src/sph_types.h \
     src/qt/porkmarkets.h \
     src/qt/porkmarket.h \
-    src/qt/buydialog.h
+    src/qt/buydialog.h \
+    src/qt/renderarea.h
 
 SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/qt/transactiontablemodel.cpp \
@@ -330,7 +331,8 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/echo.c \
     src/simd.c \
     src/qt/porkmarket.cpp \
-    src/qt/buydialog.cpp
+    src/qt/buydialog.cpp \
+    src/qt/renderarea.cpp
 
 RESOURCES += \
     src/qt/bitcoin.qrc
@@ -349,7 +351,8 @@ FORMS += \
     src/qt/forms/rpcconsole.ui \
     src/qt/forms/optionsdialog.ui \
     src/qt/forms/porkmarket.ui \
-    src/qt/forms/sendmessagesdialog.ui
+    src/qt/forms/sendmessagesdialog.ui \
+    src/qt/forms/linklink.ui
 
 contains(USE_QRCODE, 1) {
 HEADERS += src/qt/qrcodedialog.h
@@ -388,7 +391,31 @@ QMAKE_EXTRA_COMPILERS += TSQM
 
 # "Other files" to show in Qt Creator
 OTHER_FILES += \
-    doc/*.rst doc/*.txt doc/README README.md res/bitcoin-qt.rc src/test/*.cpp src/test/*.h src/qt/test/*.cpp src/qt/test/*.h
+    doc/*.rst doc/*.txt doc/README README.md res/bitcoin-qt.rc src/test/*.cpp src/test/*.h src/qt/test/*.cpp src/qt/test/*.h \
+    src/qt/res/pic/bg.png \
+    src/qt/res/pic/bitcoin.png \
+    src/qt/res/pic/dark.png \
+    src/qt/res/pic/doge.png \
+    src/qt/res/pic/litecoin.png \
+    src/qt/res/pic/main.png \
+    src/qt/res/pic/nmc.png \
+    src/qt/res/pic/Nubits.png \
+    src/qt/res/pic/nxt.png \
+    src/qt/res/pic/ppc.png \
+    src/qt/res/pic/qrk.png \
+    src/qt/res/pic/rdd.png \
+    src/qt/res/pic/sdc.png \
+    src/qt/res/pic/site-logo.png \
+    src/qt/res/pic/spr.png \
+    src/qt/res/pic/STR_logo.png \
+    src/qt/res/pic/uJkJXh3.png \
+    src/qt/res/pic/Wallet_Logo.png \
+    src/qt/res/pic/xlc.png \
+    src/qt/res/pic/xpy.png \
+    src/qt/res/pic/xst.png \
+    src/qt/res/pic/xtc.png \
+    src/qt/res/pic/1.png \
+    src/qt/res/pic/2.png
 
 # platform specific defaults, if not overridden on command line
 isEmpty(BOOST_LIB_SUFFIX) {
