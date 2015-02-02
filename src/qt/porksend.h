@@ -1,5 +1,5 @@
-#ifndef PORKMARKET_H
-#define PORKMARKET_H
+#ifndef PORKSEND_H
+#define PORKSEND_H
 
 #include <QWidget>
 #include <QVBoxLayout>
@@ -9,12 +9,6 @@
 #include <QProgressBar>
 #include <QPushButton>
 #include <QTimer>
-QT_BEGIN_NAMESPACE
-class QModelIndex;
-QT_END_NAMESPACE
-class WalletModel;
-class RenderArea;
-class QVBoxLayout;
 
 
 #define IMAGESUM 24
@@ -28,15 +22,15 @@ class QVBoxLayout;
 #define PHWIDTH 40
 #define PHHEIGHT 40
 /** Overview ("home") page widget */
-class PorkMarket : public QWidget
+class PorkSendPage : public QWidget
 {
     Q_OBJECT
 public slots:void updateProgressBar();
 public:
-    explicit PorkMarket(QWidget *parent = 0);
-    ~PorkMarket(){}
+    explicit PorkSendPage(QWidget *parent = 0);
+    ~PorkSendPage(){}
 
-   void setModel(WalletModel *model){}
+ //  void setModel(WalletModel *model){}
    void LoadPic(void);
 
    void savePictoMap(void);
@@ -69,12 +63,12 @@ private:
     int arr_map[ROWCOUNT+2][COLCOUNT+2];
     QVector<QLine> lines;
     QVector<QPoint> rects;
-    
+
     QProgressBar *progressBar;
     QPushButton *startPushButton;
     QPushButton *PromptPushButton;
     QPushButton *resetPushButton;
-    
+
     QTimer* timer;
     int  counter;
     //地图行、列数
@@ -84,16 +78,16 @@ private:
     bool isRect;
     bool isStart;
     int clickCount; //click count
-    
+
     int clickX0;
     int clickY0;
     int clickX1;
     int clickY1;
-    
+
     int sumCount;
     void connectFri(QListWidgetItem * );
     void on_pushButton_clicked();
-    
+
     void on_pushButton_2_clicked();
 };
 

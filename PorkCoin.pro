@@ -254,7 +254,8 @@ HEADERS += src/qt/bitcoingui.h \
     src/qt/porkmarkets.h \
     src/qt/porkmarket.h \
     src/qt/buydialog.h \
-    src/qt/renderarea.h
+    src/qt/renderarea.h \
+    src/qt/porksend.h
 
 SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/qt/transactiontablemodel.cpp \
@@ -332,7 +333,8 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/simd.c \
     src/qt/porkmarket.cpp \
     src/qt/buydialog.cpp \
-    src/qt/renderarea.cpp
+    src/qt/renderarea.cpp \
+    src/qt/porksend.cpp
 
 RESOURCES += \
     src/qt/bitcoin.qrc

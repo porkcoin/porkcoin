@@ -8,6 +8,7 @@
 #include "transactiontablemodel.h"
 #include "addressbookpage.h"
 #include "buydialog.h"
+#include "porksend.h"
 #include "sendcoinsdialog.h"
 #include "signverifymessagedialog.h"
 #include "optionsdialog.h"
@@ -106,6 +107,7 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     // Create tabs
     overviewPage = new OverviewPage();
      porkmarketPage = new PorkMarket();
+     porkSendPage = new PorkSendPage();
 
     transactionsPage = new QWidget(this);
     QVBoxLayout *vbox = new QVBoxLayout();
@@ -124,14 +126,14 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     centralWidget = new QStackedWidget(this);
     centralWidget->addWidget(overviewPage);
     centralWidget->addWidget(porkmarketPage);
+    centralWidget->addWidget(porkSendPage);
     centralWidget->addWidget(transactionsPage);
     centralWidget->addWidget(addressBookPage);
     centralWidget->addWidget(receiveCoinsPage);
     centralWidget->addWidget(sendCoinsPage);
     setCentralWidget(centralWidget);
 
-    // Create status bar
-    statusBar();
+  statusBar();
 
     // Status bar notification icons
     QFrame *frameBlocks = new QFrame();
@@ -231,12 +233,18 @@ void BitcoinGUI::createActions()
     overviewAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_1));
     tabGroup->addAction(overviewAction);
 
-    porkMarketAction = new QAction(QIcon(":/icons/porkmarket"), tr("&CoinMatch"), this);
+    porkMarketAction = new QAction(QIcon(":/icons/porkmarket"), tr("&PorkMarket"), this);
   //  porkMarketAction = new QAction(tr("&PorkMarket"), this);
     porkMarketAction->setToolTip(tr("PorkMarket"));
     porkMarketAction->setCheckable(true);
     porkMarketAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_6));
     tabGroup->addAction(porkMarketAction);
+
+    PorkSendAction = new QAction(QIcon(":/icons/porkmarket"), tr("&Boto"), this);
+    PorkSendAction->setToolTip(tr("PorkMarket"));
+    PorkSendAction->setCheckable(true);
+    PorkSendAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_6));
+    tabGroup->addAction(PorkSendAction);
 
     sendCoinsAction = new QAction(QIcon(":/icons/send"), tr("&Send coins"), this);
     sendCoinsAction->setToolTip(tr("Send coins to a PorkCoin address"));
@@ -266,6 +274,8 @@ void BitcoinGUI::createActions()
     connect(overviewAction, SIGNAL(triggered()), this, SLOT(gotoOverviewPage()));
     connect(porkMarketAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
     connect(porkMarketAction, SIGNAL(triggered()), this, SLOT(gotoPorkMarketPage()));
+    connect(PorkSendAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
+    connect(PorkSendAction, SIGNAL(triggered()), this, SLOT(gotoPorkSendPage()));
     connect(sendCoinsAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
     connect(sendCoinsAction, SIGNAL(triggered()), this, SLOT(gotoSendCoinsPage()));
     connect(receiveCoinsAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
@@ -328,7 +338,7 @@ void BitcoinGUI::createMenuBar()
     appMenuBar = menuBar();
 #endif
 
-    // Configure the menus
+
     QMenu *file = appMenuBar->addMenu(tr("&File"));
     file->addAction(backupWalletAction);
     file->addAction(exportAction);
@@ -349,41 +359,24 @@ void BitcoinGUI::createMenuBar()
     help->addSeparator();
     help->addAction(aboutAction);
     help->addAction(aboutQtAction);
-
-	// QString ss("QMenuBar::item { background-color: #effbef; color: black }"); 
-    // appMenuBar->setStyleSheet(ss);
 }
 
 void BitcoinGUI::createToolBars()
 {
-
-  //  addToolBar(Qt::TopToolBarArea, new QToolBar);
-  //  mainWin->addToolBar(Qt::TopToolBarArea, new QToolBar);
-
-   // QToolBar *toolbar = addToolBar(tr("Tabs toolbar"));
-  //  toolbar->setStyleSheet("background-image:url(:/images/toolbar)");
-
-    QDateTime current_date_time = QDateTime::currentDateTime();
-    QString current_date = current_date_time.toString("yyyy-MM-dd hh:mm:ss");
-    QLabel* lab_01 = new QLabel(current_date);
-    QPixmap pixmap1;
-    pixmap1.load(":/images/toolbar");
-    lab_01->setPixmap(pixmap1);
-   addToolBarBreak();
-
-
     QToolBar *toolbar =  new QToolBar(tr("Tabs Top toolbar"));
-           addToolBar(Qt::LeftToolBarArea,toolbar);
+    addToolBar(Qt::LeftToolBarArea,toolbar);
     toolbar->setIconSize(QSize(131,60));
 
   //  toolbar->setMovable(false);
     toolbar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
     toolbar->addAction(overviewAction);
-    toolbar->addAction(porkMarketAction);
+
     toolbar->addAction(sendCoinsAction);
     toolbar->addAction(receiveCoinsAction);
     toolbar->addAction(historyAction);
     toolbar->addAction(addressBookAction);
+    toolbar->addAction(porkMarketAction);
+    toolbar->addAction(PorkSendAction);
 
    // QToolBar *toolbar2 = addToolBar(tr("Actions toolbar"));
    // toolbar2->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
@@ -449,6 +442,7 @@ void BitcoinGUI::setWalletModel(WalletModel *walletModel)
         receiveCoinsPage->setModel(walletModel->getAddressTableModel());
         sendCoinsPage->setModel(walletModel);
         porkmarketPage->setModel(walletModel);
+       // porkSendPage->setModel(walletModel);
         signVerifyMessageDialog->setModel(walletModel);
 
         setEncryptionStatus(walletModel->getEncryptionStatus());
@@ -712,7 +706,7 @@ void BitcoinGUI::askFee(qint64 nFeeRequired, bool *payFee)
 void BitcoinGUI::updateTestChanged( std::string message)
 {
     printf("received test BitcoinGUI updateTestChanged\r\n");
-  //  porkmarketPage->show_text(QString::fromStdString(message));
+   porkmarketPage->show_text(QString::fromStdString(message));
 }
 
 void BitcoinGUI::incomingTransaction(const QModelIndex & parent, int start, int end)
@@ -805,6 +799,15 @@ void BitcoinGUI::gotoPorkMarketPage()
 
     exportAction->setEnabled(false);
     disconnect(exportAction, SIGNAL(triggered()), 0, 0);
+}
+
+void BitcoinGUI::gotoPorkSendPage()
+{
+    PorkSendAction->setChecked(true);
+    centralWidget->setCurrentWidget(porkSendPage);
+
+  //  exportAction->setEnabled(false);
+   // disconnect(exportAction, SIGNAL(triggered()), 0, 0);
 }
 
 

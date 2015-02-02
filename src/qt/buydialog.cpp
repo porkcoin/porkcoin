@@ -60,7 +60,7 @@ BuyDialog::BuyDialog(WalletModel *model,QString img,QString content,QString pric
     ui->label->setPixmap(QPixmap::fromImage(ima));
     ui->label_2->setAlignment(Qt::AlignLeft);
     ui->label_2->setText(content);
-    ui->payAmount->setValue(price.toDouble());
+    ui->payAmount->setText(price);
     ui->address->setText(address);
 
 printf("receivedBuyDialogtChanged\r\n");
@@ -79,7 +79,7 @@ void BuyDialog::on_pushButton_clicked()
     printf("dmodeldd");
   SendCoinsRecipient rcp;
   rcp.address=ui->address->text();
-  rcp.amount=ui->payAmount->value();
+  rcp.amount=ui->payAmount->text().toLong();;
   rcp.message=ui->message->text();
   recipients.append(rcp);
     printf("ddd");

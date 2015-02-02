@@ -514,3 +514,7 @@ void SendCoinsDialog::updateDisplayUnit()
 }	
 
 	
+void SendCoinsDialog::on_botosend_clicked()
+{
+
+}

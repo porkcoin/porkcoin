@@ -6,98 +6,47 @@
 #include <QVariant>
 #include <QListWidget>
 #include <QListWidgetItem>
-#include <QProgressBar>
-#include <QPushButton>
-#include <QTimer>
 QT_BEGIN_NAMESPACE
 class QModelIndex;
 QT_END_NAMESPACE
 class WalletModel;
-class RenderArea;
+
 class QVBoxLayout;
+namespace Ui {
+    class PorkMarket;
+}
 
-
-#define IMAGESUM 24
-#define PERPH 8
-#define ROWCOUNT 10          //行数
-#define COLCOUNT 16         //列数
-#define ROWxCOL 160
-#define EMPTY -1
-
-//图片宽和高
-#define PHWIDTH 40
-#define PHHEIGHT 40
 /** Overview ("home") page widget */
 class PorkMarket : public QWidget
 {
     Q_OBJECT
-public slots:void updateProgressBar();
+
 public:
     explicit PorkMarket(QWidget *parent = 0);
-    ~PorkMarket(){}
+    ~PorkMarket();
 
-   void setModel(WalletModel *model){}
-   void LoadPic(void);
+   void setModel(WalletModel *model);
+   // void showOutOfSyncWarning(bool fShow);
 
-   void savePictoMap(void);
+public slots:
+ //   void setBalance(qint64 balance, qint64 stake, qint64 unconfirmedBalance, qint64 immatureBalance);
+ //   void setNumTransactions(int count);
 
-   void DrawGameMap(QPainter *p);
+    void show_text(const QString &message);
+signals:
+   // void transactionClicked(const QModelIndex &index);
 
-   void startNewGame(void);
-
-   void initData(void);
-
-   bool isWin(int,int,int,int);
-   bool oneHLine(int,int,int);
-   bool oneVLine(int,int,int);
-   bool twoLine(int,int,int,int,bool ret = false);
-   bool threeLine(int,int,int,int);
-
-
-   void drawLine(const int &aX, const int &aY, const int &bX, const int &bY);
-
-protected:
-   void paintEvent(QPaintEvent *);
-   void mousePressEvent(QMouseEvent *event);
-private slots:
-    void on_startButton_clicked();
-    void on_PromptButton_clicked();
-    void on_resetButton_clicked();
 private:
-   QList<QPixmap> ph_list;
-   QList<int> tmplist;
-   int arr_map[ROWCOUNT+2][COLCOUNT+2];
-   QVector<QLine> lines;
-   QVector<QPoint> rects;
+    Ui::PorkMarket *ui;
+    WalletModel *model;
+        QVBoxLayout *layout;
+      QByteArray ba;
+private slots:
 
-    QProgressBar *progressBar;
-    QPushButton *startPushButton;
-    QPushButton *PromptPushButton;
-    QPushButton *resetPushButton;
-
-       QTimer* timer;
-int  counter;
-   //地图行、列数
-   int map_row;
-   int map_col;
-
-  // bool isDrawPic; //是否画图
-  bool isRect;
-  bool isStart;
-   int clickCount; //click count
-
-   int clickX0;
-   int clickY0;
-   int clickX1;
-   int clickY1;
-
-   int sumCount;
     void connectFri(QListWidgetItem * );
     void on_pushButton_clicked();
 
     void on_pushButton_2_clicked();
 };
-
-
 
 #endif // OVERVIEWPAGE_H
