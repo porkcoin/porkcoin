@@ -25,7 +25,6 @@ PorkMarket::PorkMarket(QWidget *parent) :
     ui->setupUi(this);
 
     QObject::connect(ui->listWidget,SIGNAL(itemClicked(QListWidgetItem * )),this,SLOT(connectFri(QListWidgetItem * )));
-
 }
 
 
@@ -79,9 +78,8 @@ void PorkMarket::show_text(const QString &message)
     top->addWidget(lab_time);
     if(list.size()>3)
     {
-      QLabel* lab_price = new QLabel(list[2]);
+      QLabel* lab_price = new QLabel("price:"+list[2]+"XPC");
       top->addWidget(lab_price);
-
     }
     vbl->addLayout(top);
 

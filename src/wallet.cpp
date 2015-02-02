@@ -532,11 +532,11 @@ bool CWallet::AddToWalletIfInvolvingMe_CWalletTx(const CWalletTx& wtx, const CBl
         if (fExisted && !fUpdate) return false;
         if (fExisted || IsMine(wtx) || IsFromMe(wtx))
         {
-           // CWalletTx wtx(this,tx);
+            CWalletTx wtxx(wtx);
             // Get merkle branch if transaction was found in a block
             if (pblock)
-                wtx.SetMerkleBranch(pblock);
-            return AddToWallet(wtx);
+                wtxx.SetMerkleBranch(pblock);
+            return AddToWallet(wtxx);
         }
         else
             WalletUpdateSpent(wtx);
